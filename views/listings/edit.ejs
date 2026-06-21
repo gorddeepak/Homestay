@@ -1,6 +1,6 @@
 <% layout("/layouts/boilerplate") %>
 <H3>Edit the Listing:</H3>
-<form method="post" action="/listings/<%=listing._id%>?_method=PUT" class="needs-validation" novalidate>
+<form method="post" action="/listings/<%=listing._id%>?_method=PUT" enctype="multipart/form-data" class="needs-validation" novalidate>
     <div class="mb-3">
     <label for="title" class="form-label">Title</label>
     <input type="text" name="listing[title]" placeholder="enter title" class="form-control" value="<%= listing.title %>" required>
@@ -31,9 +31,13 @@
         Enter a Valid Price
     </div>
 </div>
+<div class="mb-3 ">
+    <label for="previewImage">Original Image:-</label><br>
+    <img src="<%=originalImageUrl%>" alt="current listing image" class="img-thumbnail" >
+</div>
 <div class="mb-3">
     <label for="image" class="form-label">Image</label>
-    <input type="text" name="listing[image]" placeholder="enter Image link/URL" class="form-control" value="<%=listing.image%>" required>
+    <input type="file" name="listing[image]" placeholder="enter Image link/URL" class="form-control">
     <div class="valid-feedback">
         Image Looks good!
     </div>

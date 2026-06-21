@@ -15,6 +15,7 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
 
+
 const sessionOptions = {
     secret : "verysecretcode",
     resave : false,
@@ -59,7 +60,7 @@ passport.deserializeUser(User.deserializeUser());
 app.use((req,res,next)=>{
     res.locals.success = req.flash("success");
     res.locals.error = req.flash("error");
-    res.locals.isAuthenticated = req.isAuthenticated();
+    res.locals.currUser = req.user;
     next();
 });
 

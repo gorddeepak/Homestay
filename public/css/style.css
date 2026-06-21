@@ -108,3 +108,15 @@ body{
 .btns{
     display: flex;
 }
+
+.starability-result {
+    transform: scale(0.6);
+    transform-origin: left;
+}
+
+/* edit page preview image */
+.img-thumbnail {
+    width: 300px;
+    height: 200px;
+    object-fit: cover;
+}
