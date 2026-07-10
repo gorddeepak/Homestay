@@ -1,37 +1,42 @@
 <% layout("/layouts/boilerplate") %>
-<form action="/signup" class="needs-validation mt-2" novalidate method="post">
-    <div class="col-6 offset-3">
-        <h3> Signup:- </h3>
-        <div class="mb-3">
-        <label for="Username" class="form-label">Username</label>
-        <input type="text" name="username" placeholder="enter Username" class="form-control " required>
-        <div class="valid-feedback">
-            Username Looks good!
-        </div>
-        <div class="invalid-feedback">
-            Enter a Valid Username
-        </div>
-    </div>
-    <div class="mb-3">
-        <label for="Email" class="form-label">Email</label>
-        <input type="email" name="email" placeholder="enter Email" class="form-control " required>
-        <div class="valid-feedback">
-            Email Looks good!
-        </div>
-        <div class="invalid-feedback">
-            Enter a Valid Email
-        </div>
-    </div>
-    <div class="mb-3">
-        <label for="Password" class="form-label">Password</label>
-        <input type="password" name="password" placeholder="enter Password" class="form-control " required>
-        <div class="valid-feedback">
-            Password Looks good!
-        </div>
-        <div class="invalid-feedback">
-            Enter a Valid Password
-        </div>
-    </div>
-    <button class="btn btn-dark add-btn">Signup</button>
-    </div>
-</form>
+
+<div class="container py-5" style="max-width: 28rem;">
+  <div class="panel-clay p-4 p-md-5 rounded-4">
+
+    <h2 class="fw-bold mb-1 text-earth" style="font-size: 1.75rem;">Create an account</h2>
+    <p class="mb-4 text-sand" style="font-size: 0.9rem;">Join Homestay and start exploring</p>
+
+    <form action="/signup" class="needs-validation" novalidate method="post">
+
+      <div class="mb-3">
+        <label class="form-label-brand text-uppercase fw-bold d-block mb-1">Username</label>
+        <input type="text" name="username" placeholder="Choose a username" class="form-control form-control-brand" required>
+        <div class="valid-feedback">Looks good!</div>
+        <div class="invalid-feedback">Please enter a username.</div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label-brand text-uppercase fw-bold d-block mb-1">Email</label>
+        <input type="email" name="email" placeholder="you@example.com" class="form-control form-control-brand" required>
+        <div class="valid-feedback">Looks good!</div>
+        <div class="invalid-feedback">Please enter a valid email.</div>
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label-brand text-uppercase fw-bold d-block mb-1">Password</label>
+        <input type="password" name="password" placeholder="Create a password" class="form-control form-control-brand" required>
+        <div class="valid-feedback">Looks good!</div>
+        <div class="invalid-feedback">Please enter a password.</div>
+      </div>
+
+      <button class="btn btn-earth w-100 py-2">Sign up</button>
+
+    </form>
+
+    <p class="text-center mt-3 mb-0 text-sand" style="font-size: 0.85rem;">
+      Already have an account?
+      <a href="/login" class="fw-semibold text-decoration-none text-earth">Login</a>
+    </p>
+
+  </div>
+</div>

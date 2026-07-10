@@ -1,15 +1,47 @@
-<footer>
-    <div class="f-info">
-        <div class="f-info-socials">
-            <a href="/instagram"><i class="bi bi-instagram"></i></a>
-            <a href="/facebook"><i class="bi bi-facebook"></i></a>
-            <a href="/linkedin"><i class="bi bi-linkedin"></i></a>
-            <a href="/twitter"><i class="bi bi-twitter"></i></a>
+<footer class="homestay-footer">
+  <div class="container">
+    <div class="row g-5">
+      <div class="col-12 col-md-6">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <i class="fa-solid fa-circle "></i>
+          <span class="footer-brand-name">Homestay</span>
         </div>
-        <div class="f-info-brand">&copy;Airbnb Private Limited</div>
-        <div class="f-info-links">
-            <a href="/privacy">Privacy</a>
-            <a href="terms">Terms</a>
+        <p class="footer-blurb">
+          A curated collective of homes, each selected for its architectural soul and connection to the landscape.
+        </p>
+        <div class="footer-socials d-flex gap-3 mt-3">
+          <a href="/instagram"><i class="bi bi-instagram"></i></a>
+          <a href="/facebook"><i class="bi bi-facebook"></i></a>
+          <a href="/linkedin"><i class="bi bi-linkedin"></i></a>
+          <a href="/twitter"><i class="bi bi-twitter"></i></a>
         </div>
+      </div>
+
+      <div class="col-6 col-md-3">
+        <h4 class="footer-heading">Discover</h4>
+        <ul class="footer-links list-unstyled">
+          <li class="mb-3"><a href="#">The Journal</a></li>
+          <li class="mb-3"><a href="#">Gift Cards</a></li>
+          <li class="mb-3"><a href="#">Sustainability</a></li>
+        </ul>
+      </div>
+
+      <div class="col-6 col-md-3">
+        <h4 class="footer-heading">Support</h4>
+        <ul class="footer-links list-unstyled">
+          <li class="mb-3"><a href="#">Help Center</a></li>
+          <li class="mb-3"><a href="#">Cancellation</a></li>
+          <li class="mb-3"><a href="#">Safety</a></li>
+        </ul>
+      </div>
     </div>
+
+    <div class="footer-bottom d-flex justify-content-between align-items-center flex-wrap gap-3">
+      <span>&copy; <%= new Date().getFullYear() %> Homestay</span>
+      <div class="footer-legal-links d-flex gap-4">
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+      </div>
+    </div>
+  </div>
 </footer>

@@ -1,0 +1,26 @@
+<% for (let listing of listings) { %>
+<div class="col listing-col" data-category="<%= listing.category || '' %>">
+  <a href="/listings/<%= listing._id %>" class="text-decoration-none">
+    <div class="ratio ratio-1x1 rounded-4 overflow-hidden position-relative">
+      <img src="<%= listing.image.url %>" alt="<%= listing.title %>" class="listing-img">
+      <div class="listing-category-badge">
+        <i class="bi bi-tag-fill me-1"></i><%= listing.category || 'Uncategorized' %>
+      </div>
+    </div>
+    <div class="pt-2">
+      <p class="eyebrow text-uppercase fw-bold mb-1">
+        <i class="bi bi-geo-alt-fill me-1"></i><%= listing.location %>, <%= listing.country %>
+      </p>
+      <h3 class="listing-title mb-1" style="font-size: 1rem;"><%= listing.title %></h3>
+      <p class="listing-price mb-0">
+        &#8377;<%= listing.price.toLocaleString("en-IN") %><span class="ms-1 opacity-75 fw-normal">/night</span>
+      </p>
+      <% if (listing.averageRating) { %>
+      <p class="stars mb-0 mt-1">
+        ★ <%= listing.averageRating %> <span class="opacity-75" style="font-size: 0.8em;">(<%= listing.review.length %>)</span>
+      </p>
+      <% } %>
+    </div>
+  </a>
+</div>
+<% } %>

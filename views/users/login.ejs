@@ -1,27 +1,35 @@
 <% layout("/layouts/boilerplate") %>
-<form action="/login" class="needs-validation mt-2" novalidate method="post">
-    <div class="col-6 offset-3">
-        <h3> Login:- </h3>
-        <div class="mb-3">
-        <label for="Username" class="form-label">Enter your Username</label>
-        <input type="text" name="username" placeholder="enter Username" class="form-control " required>
-        <div class="valid-feedback">
-            Username Looks good!
-        </div>
-        <div class="invalid-feedback">
-            Enter a Valid Username
-        </div>
-    </div>
-    <div class="mb-3">
-        <label for="Password" class="form-label">Enter your Password</label>
-        <input type="password" name="password" placeholder="enter Password" class="form-control " required>
-        <div class="valid-feedback">
-            Password Looks good!
-        </div>
-        <div class="invalid-feedback">
-            Enter a Valid Password
-        </div>
-    </div>
-    <button class="btn btn-dark add-btn">Login</button>
-    </div>
-</form>
+
+<div class="container py-5" style="max-width: 28rem;">
+  <div class="panel-clay p-4 p-md-5 rounded-4">
+
+    <h2 class="fw-bold mb-1 text-earth" style="font-size: 1.75rem;">Welcome back</h2>
+    <p class="mb-4 text-sand" style="font-size: 0.9rem;">Sign in to your Homestay account</p>
+
+    <form action="/login" class="needs-validation" novalidate method="post">
+
+      <div class="mb-3">
+        <label for="username" class="form-label-brand text-uppercase fw-bold d-block mb-1">Username</label>
+        <input type="text" id="username" name="username" placeholder="Enter your username" class="form-control form-control-brand" required>
+        <div class="valid-feedback">Looks good!</div>
+        <div class="invalid-feedback">Please enter a valid username.</div>
+      </div>
+
+      <div class="mb-4">
+        <label for="password" class="form-label-brand text-uppercase fw-bold d-block mb-1">Password</label>
+        <input type="password" id="password" name="password" placeholder="Enter your password" class="form-control form-control-brand" required>
+        <div class="valid-feedback">Looks good!</div>
+        <div class="invalid-feedback">Please enter your password.</div>
+      </div>
+
+      <button class="btn btn-earth w-100 py-2">Login</button>
+
+    </form>
+
+    <p class="text-center mt-3 mb-0 text-sand" style="font-size: 0.85rem;">
+      Don't have an account?
+      <a href="/signup" class="fw-semibold text-decoration-none text-earth">Sign up</a>
+    </p>
+
+  </div>
+</div>

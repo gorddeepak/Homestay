@@ -1,99 +1,116 @@
 <% layout("/layouts/boilerplate") %>
-<style>
-  #filters {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-  .filter {
-    text-align: center;
-    margin-right: 2rem;
-    margin-top: 2rem;
-    opacity: 0.7;
-  }
-  .filter:hover {
-    opacity: 1;
-    cursor: pointer;
-  }
-  .filter p {
-    font-size: 0.8rem;
-  }
-  .tax-info{
-    display: none;
-  }
-  .tax-toggle{
-    border: 1px solid black;
-    border-radius: 1rem;
-    height: 3.25rem;
-    padding: 1rem;
-    margin-left: 2rem;
-    display: flex;
-    align-items: center;
-  }
-</style>
-<body>
-    <div id="filters">
-        <div class="filter">
-    <div><i class="fa-solid fa-fire"></i></div>
-    <p>Trending</p>
-    <!-- <i class="bi bi-dash-lg"></i> -->
+
+<!-- HERO -->
+<section class="hero-section-bg">
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+
+    <p class="hero-eyebrow">The world's finest homes</p>
+    <h1 class="hero-headline">
+      yours to <em class="hero-serif">stay.</em>
+    </h1>
+
+    <a href="#all-stays" class="hero-cta mt-4 d-inline-block">
+      Explore stays <i class="fas fa-arrow-right ms-2"></i>
+    </a>
+
   </div>
-  <div class="filter">
-    <div><i class="fa-solid fa-bed"></i></div>
-    <p>Rooms</p>
-  </div>
-  <div class="filter">
-    <div><i class="fa-solid fa-mountain-city"></i></div>
-    <p>Iconic Cities</p>
-  </div>
-  <div class="filter">
-    <div><i class="fa-solid fa-mountain"></i></div>
-    <p>Mountain</p>
-  </div>
-  <div class="filter">
-    <div><i class="fa-brands fa-fort-awesome"></i></div>
-    <p>Castles</p>
-  </div>
-  <div class="filter">
-    <div><i class="fa-solid fa-person-swimming"></i></div>
-    <p>Amazing Pools</p>
-  </div>
-  <div class="filter">
-    <div><i class="fa-solid fa-tent"></i></div>
-    <p>Camping</p>
-  </div>
-  <div class="filter">
-    <div><i class="fa-solid fa-cow"></i></div>
-    <p>Farms</p>
-  </div>
-  <div class="filter">
-    <div><i class="fa-solid fa-snowflake"></i></div>
-    <p>Arctic</p>
-  </div>
-  <div class="filter">
-    <div><i class="fa-solid fa-igloo"></i></div>
-    <p>Domes</p>
-  </div>
-  <div class="filter">
-    <div><i class="fa-solid fa-sailboat"></i></div>
-    <p>Boats</p>
-  </div>
+</section>
+
+
+<!-- CURATED BENTO (only if 4+ listings) -->
+<% if (allListings.length >= 4) { %>
+<section class="py-5">
+  <div class="container bento-container">
+    <div class="d-flex justify-content-between align-items-end mb-4">
+      <div>
+        <p class="eyebrow-lg text-uppercase fw-bold mb-1 opacity-75">Featured stays</p>
+        <h2 class="fw-bold m-0 text-earth fs-2.5">Handpicked For You</h2>
+      </div>
+      <a href="#all-stays" class="text-decoration-none fw-semibold text-earth ">
+        View all <i class="bi bi-arrow-right ms-1"></i>
+      </a>
     </div>
-    <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1" >
-        <% for(let listing of allListings){ %>
-            <a href="/listings/<%=listing._id%>" class="listing-link">
-                <div class="card-listing col card">
-                    <img src="<%=listing.image.url%>" class="card-img-top" alt="<%=listing.image.filename%>" style="height: 20rem">
-                    <div class="card-img-overlay"></div>
-                    <div class="card-body">
-                        <p class="card-text">
-                            <b><%=listing.title%></b> <br>
-                            &#8377;<%=listing.price.toLocaleString("en-In")%>/night
-                        </p>
-                    </div>
-                </div>
-            </a>
-    <% } %> 
+
+    <div class="bento-grid">
+      <% const featured = allListings.slice(0, 4); %>
+      <% featured.forEach((listing, i) => { %>
+      <a href="/listings/<%= listing._id %>" class="bento-card <%= i === 0 ? 'bento-large' : i === 1 ? 'bento-wide' : 'bento-small' %>">
+        <img src="<%= listing.image.url %>" alt="<%= listing.title %>" class="bento-img">
+
+        <div class="listing-category-badge">
+          <i class="bi bi-tag-fill me-1"></i><%= listing.category || 'Uncategorized' %>
+        </div>
+
+        <div class="bento-overlay-gradient"></div>
+        <div class="bento-info-overlay">
+          <p class="mb-1 text-uppercase fw-bold opacity-75" style="font-size: 0.75rem; letter-spacing: 0.15em;">
+            <i class="bi bi-geo-alt-fill me-1"></i><%= listing.location %>, <%= listing.country %>
+          </p>
+          <h3 class="bento-title mb-1"><%= listing.title %></h3>
+          <p class="bento-price mb-0">&#8377;<%= listing.price.toLocaleString("en-IN") %><span class="ms-1 opacity-75 fw-normal">/night</span></p>
+          <% if (listing.averageRating) { %>
+          <p class="stars-light mb-0 mt-1">
+            ★ <%= listing.averageRating %> <span class="opacity-75">(<%= listing.review.length %>)</span>
+          </p>
+          <% } %>
+        </div>
+      </a>
+      <% }); %>
     </div>
-</body>
-</html>
+  </div>
+</section>
+<% } %>
+
+
+<!-- ALL STAYS -->
+<section class="py-4" id="all-stays">
+  <div class="container" style="max-width: 80rem;">
+
+    <div class="category-tabs mb-4">
+      <div class="d-flex">
+        <input type="text" id="aiSearchInput" class="form-control form-control-brand " style="width: 5rem;" placeholder="Search">
+        <button type="button" id="aiSearchBtn" class="btn btn-earth "><i class="fa-solid fa-magnifying-glass"></i></button>
+      </div>
+      <button class="category-tab active" data-category="all">
+        <i class="bi bi-grid-fill me-1"></i> All
+      </button>
+      <button class="category-tab" data-category="Hill Station">
+        <i class="bi bi-tree-fill me-1"></i> Hill Station
+      </button>
+      <button class="category-tab" data-category="Lakefront Retreat">
+        <i class="bi bi-water me-1"></i> Lakefront Retreat
+      </button>
+      <button class="category-tab" data-category="Snowy Peaks">
+        <i class="bi bi-snow2 me-1"></i> Snowy Peaks
+      </button>
+      <button class="category-tab" data-category="Coastal Haven">
+        <i class="bi bi-umbrella me-1"></i> Coastal Haven
+      </button>
+      <button class="category-tab" data-category="Woodland Hideaway">
+        <i class="bi bi-tree me-1"></i> Woodland Hideaway
+      </button>
+      <button class="category-tab" data-category="Desert Sanctuary">
+        <i class="bi bi-sun me-1"></i> Desert Sanctuary
+      </button>
+      <button class="category-tab" data-category="Houseboat">
+        <i class="fas fa-ship me-1"></i> Houseboat
+      </button>
+      <button class="category-tab" data-category="Heritage Homestay">
+        <i class="bi bi-bank2 me-1"></i> Heritage Homestay
+      </button>
+      <button class="category-tab" data-category="Mountain Escape">
+        <i class="fas fa-mountain me-1"></i> Mountain Escape
+      </button>
+      <button class="category-tab" data-category="Rural Charm">
+        <i class="bi bi-flower1 me-1"></i> Rural Charm
+      </button>
+      <button class="category-tab" data-category="Urban Oasis">
+        <i class="bi bi-building me-1"></i> Urban Oasis
+      </button>
+    </div>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+      <%- include("../includes/listing.ejs", { listings: allListings }) %>
+    </div>
+  </div>
+</section>
