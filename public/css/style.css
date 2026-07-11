@@ -429,6 +429,13 @@ h6 {
     left: 0.75rem;
     right: 0.75rem;
   }
+
+  /* Ensure large and wide bento titles match small ones on mobile */
+  .bento-large .bento-title,
+  .bento-wide .bento-title {
+    font-size: 1rem;
+    line-height: 1.15;
+  }
 }
 
 @media (max-width: 480px) {
