@@ -2,7 +2,6 @@ require("dotenv").config();
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
-// const MONGO_URL = "mongodb://127.0.0.1:27017/airbnb";
 const DB_URL = process.env.ATLAS_DB_URL;
 const path = require("path");
 const methodOverride = require("method-override");
@@ -22,7 +21,7 @@ const User = require("./models/user.js");
 const store = MongoStore.create({
     mongoUrl: DB_URL,
     crypto: {
-        secret: "verysecretcode",
+        secret: process.env.SECRET,
     },
     touchAfter: 24*3600,
 
@@ -34,7 +33,7 @@ store.on("error",()=>{
 
 const sessionOptions = {
     store,
-    secret: "verysecretcode",
+    secret: process.env.SECRET,
     resave: false,
     saveUninitialized: true,
     cookie: {
