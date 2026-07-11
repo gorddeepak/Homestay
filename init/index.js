@@ -13,15 +13,15 @@
  *   6. Closes the connection cleanly
  */
 
+require("dotenv").config();
 const mongoose = require("mongoose");
 const Listing  = require("../models/listing.js");
 const Review   = require("../models/review.js");
 const User     = require("../models/user.js");
 const { data: sampleListings, reviewPool } = require("./data.js");
+const DB_URL = process.env.ATLAS_DB;
 
-const MONGO_URL = "mongodb://127.0.0.1:27017/homestay";
 
-// ─── Sample users ─────────────────────────────────────────────────────────────
 // ─── Sample users ─────────────────────────────────────────────────────────────
 const sampleUsers = [
   { username: "alice_travels",   email: "alice@example.com",   password: "Password123" },
@@ -42,7 +42,7 @@ const pick = (arr, i) => arr[i % arr.length];
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 async function main() {
-  await mongoose.connect(MONGO_URL);
+  await mongoose.connect(DB_URL);
   console.log("✅  Connected to MongoDB");
 
   // 1. Clear in safe dependency order
