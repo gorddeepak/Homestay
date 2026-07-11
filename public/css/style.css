@@ -391,41 +391,43 @@ h6 {
 @media (max-width: 768px) {
   .bento-grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
     height: auto;
   }
 
-  .bento-large,
-  .bento-wide {
-    grid-column: span 1;
-    height: 22rem;
-  }
-
-  /* small cards need an explicit height on narrow screens so images don't collapse */
-  .bento-small {
-    height: 12.5rem;
-  }
-
-  /* make sure images always fill their card area */
+  /* Make all bento cards uniform squares like the regular listing cards */
   .bento-card {
-    min-height: 8rem;
+    aspect-ratio: 1 / 1;
+    height: auto;
+    display: block;
+    overflow: hidden;
   }
 
+  /* Reset the desktop-specific grid spans so each card occupies one row */
+  .bento-large,
+  .bento-wide,
+  .bento-small {
+    grid-column: auto;
+    grid-row: auto;
+    height: auto;
+  }
+
+  /* ensure images fill the square and keep cover behavior */
   .bento-img {
-    height: 100%;
     width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
-  /* tighten overlay spacing and font-sizes for small screens */
+  /* Match the normal listing typography/sizing */
+  .bento-title { font-size: 1rem; }
+  .bento-price { font-size: 0.95rem; }
+  .bento-small .bento-price { font-size: 0.95rem; }
+
   .bento-info-overlay {
-    bottom: 1rem;
-    left: 1rem;
-    right: 1rem;
-  }
-
-  .bento-title { font-size: 1.05rem; }
-
-  .show-hero-img {
-    height: 22rem;
+    bottom: 0.75rem;
+    left: 0.75rem;
+    right: 0.75rem;
   }
 }
 
@@ -433,25 +435,16 @@ h6 {
   body {
     padding-top: 3.5rem;
   }
-
-  .bento-large,
-  .bento-wide {
-    height: 18rem;
-  }
-
   .hero-section-bg {
     margin-top: -3.5rem;
     /* match the new body padding-top exactly */
   }
 
-  /* extra adjustments for very small screens */
-  .bento-small {
-    height: 10.5rem;
-  }
-
+  /* On very small screens keep the same square bento cards and slightly reduce text */
+  .bento-card { aspect-ratio: 1 / 1; }
   .bento-title { font-size: 0.95rem; }
   .bento-price { font-size: 0.85rem; }
-  .bento-info-overlay { bottom: 0.75rem; left: 0.75rem; right: 0.75rem; }
+  .bento-info-overlay { bottom: 0.6rem; left: 0.6rem; right: 0.6rem; }
 }
 
 
