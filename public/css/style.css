@@ -400,6 +400,30 @@ h6 {
     height: 22rem;
   }
 
+  /* small cards need an explicit height on narrow screens so images don't collapse */
+  .bento-small {
+    height: 12.5rem;
+  }
+
+  /* make sure images always fill their card area */
+  .bento-card {
+    min-height: 8rem;
+  }
+
+  .bento-img {
+    height: 100%;
+    width: 100%;
+  }
+
+  /* tighten overlay spacing and font-sizes for small screens */
+  .bento-info-overlay {
+    bottom: 1rem;
+    left: 1rem;
+    right: 1rem;
+  }
+
+  .bento-title { font-size: 1.05rem; }
+
   .show-hero-img {
     height: 22rem;
   }
@@ -419,6 +443,15 @@ h6 {
     margin-top: -3.5rem;
     /* match the new body padding-top exactly */
   }
+
+  /* extra adjustments for very small screens */
+  .bento-small {
+    height: 10.5rem;
+  }
+
+  .bento-title { font-size: 0.95rem; }
+  .bento-price { font-size: 0.85rem; }
+  .bento-info-overlay { bottom: 0.75rem; left: 0.75rem; right: 0.75rem; }
 }
 
 
