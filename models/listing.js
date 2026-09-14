@@ -2,6 +2,8 @@ const mongoose = require("mongoose")
 const Review = require("./review")
 const Schema = mongoose.Schema
 
+const { CATEGORIES } = require("../schema")
+
 const ListingSchema = new Schema({
     title: {
         type: String,
@@ -26,23 +28,10 @@ const ListingSchema = new Schema({
             required: true
         }
     },
-    // models/listing.js - Add category field
     category: {
         type: String,
         required: true,
-        enum: [
-            'Mountain Escape',
-            'Lakefront Retreat',
-            'Snowy Peaks',
-            'Coastal Haven',
-            'Woodland Hideaway',
-            'Desert Sanctuary',
-            'Rural Charm',
-            'Urban Oasis',
-            'Hill Station',
-            'Heritage Homestay',
-            'Houseboat'
-        ]
+        enum: CATEGORIES
     },
     review: [
         {

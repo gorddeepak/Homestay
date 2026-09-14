@@ -32,7 +32,7 @@ module.exports.updateListing = async (req, res) => {
     const existing = await Listing.findById(id);
     if (existing.location !== updatedListing.location) {
         const result = await maptilerClient.geocoding.forward(updatedListing.location);
-        updatedListing.geometry = result.features[0].geometry;
+        updatedListing.geometry = result.features[0]?.geometry ?? existing.geometry;
     };
     await Listing.findByIdAndUpdate(id, updatedListing);
     req.flash("success", "Listing was updated successfully!");
@@ -41,9 +41,7 @@ module.exports.updateListing = async (req, res) => {
 
 module.exports.deleteListing = async (req, res) => {
     let { id } = req.params;
-    // res.send(req.body.listing)
-    const deletedLisitng = await Listing.findByIdAndDelete(id);
-    console.log(deletedLisitng);
+    await Listing.findByIdAndDelete(id);
     req.flash("success", "Listing was deleted successfully!");
     res.redirect("/listings");
 };
@@ -59,14 +57,17 @@ module.exports.showListing = async (req, res) => {
 };
 
 module.exports.createListing = async (req, res, next) => {
+    if (!req.file) {
+        req.flash("error", "Please upload an image for your listing!");
+        return res.redirect("/listings/new");
+    }
     const newListing = new Listing(req.body.listing);
     const url = req.file.path;
     const filename = req.file.filename;
     const result = await maptilerClient.geocoding.forward(newListing.location);
-    newListing.geometry = result.features[0].geometry;
+    newListing.geometry = result.features[0]?.geometry;
     newListing.owner = req.user._id;
     newListing.image = { url, filename };
-    console.log(newListing);
     await newListing.save();
     req.flash("success", "Listing was saved successfully!");
     res.redirect("/listings");

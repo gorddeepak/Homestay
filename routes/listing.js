@@ -4,10 +4,7 @@ if (process.env.NODE_ENV != "production") {
 
 const express = require('express');
 const router = express.Router();
-const Listing = require("../models/listing.js");
-const { ListingSchema, ReviewSchema } = require("../schema.js");
 const wrapAsync = require("../utils/wrapAsync.js");
-const ExpressError = require("../utils/expressError.js");
 const { isLoggedIn, isOwner, validateListing } = require("../middleware.js");
 const listingController = require("../controllers/listing.js");
 const multer = require('multer');
@@ -17,8 +14,8 @@ const upload = multer({ storage });
 router.route("/")
     .get(wrapAsync(listingController.index))
     .post(isLoggedIn,
-        validateListing,
         upload.single("listing[image]"),
+        validateListing,
         wrapAsync(listingController.createListing));
 
 router.get("/new", isLoggedIn, wrapAsync(listingController.renderNewForm));
@@ -28,9 +25,9 @@ router.get("/:id/edit", isLoggedIn, isOwner,
 
 router.route("/:id")
     .put(isLoggedIn,
+        isOwner,
         upload.single("listing[image]"),
         validateListing,
-        isOwner,
         wrapAsync(listingController.updateListing))
     .delete(isLoggedIn, isOwner, wrapAsync(listingController.deleteListing))
     .get(wrapAsync(listingController.showListing));

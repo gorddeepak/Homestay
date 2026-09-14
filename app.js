@@ -11,6 +11,7 @@ const listingsRoute = require("./routes/listing.js");
 const reviewRoute = require("./routes/review.js");
 const userRoute = require("./routes/user.js");
 const aiRoute = require("./routes/ai.js");
+const listingController = require("./controllers/listing.js");
 const session = require('express-session');
 const MongoStore = require("connect-mongo").default || require("connect-mongo");
 const flash = require("connect-flash");
@@ -28,19 +29,20 @@ const store = MongoStore.create({
 
 });
 
-store.on("error",()=>{
+store.on("error", (err) => {
     console.log("ERROR in MONGO SESSION STORE", err);
-})
+});
 
 const sessionOptions = {
     store,
     secret: process.env.SECRET,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: {
         expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
         maxAge: 7 * 24 * 60 * 60 * 1000,
         httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
     },
 };
 
@@ -83,8 +85,12 @@ app.use((req, res, next) => {
     next();
 });
 
-app.get("/", (req, res) => {
-    res.send("Hi, I am root")
+// home page serves the listings index; /listings keeps working as an alias
+app.get("/", listingController.index);
+
+// lightweight endpoint for cron pingers to keep the free Render instance awake
+app.get("/health", (req, res) => {
+    res.json({ ok: true });
 });
 
 app.use("/listings", listingsRoute);
@@ -98,6 +104,10 @@ app.all("*path", (req, res, next) => {
 
 app.use((err, req, res, next) => {
     let { statusCode = 500, message = "something went wrong :( " } = err;
+    // AI routes are called with fetch, so they expect JSON not an HTML page
+    if (req.path.startsWith("/listings/ai")) {
+        return res.status(statusCode).json({ error: message });
+    }
     res.status(statusCode).render("error.ejs", { message });
 });
 

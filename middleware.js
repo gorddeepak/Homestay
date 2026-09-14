@@ -22,7 +22,11 @@ module.exports.saveRedirectUrl = (req, res, next) => {
 module.exports.isOwner = async (req, res, next) => {
     let { id } = req.params;
     const listing = await Listing.findById(id);
-    if (!res.locals.currUser._id.equals(listing.owner)) {
+    if (!listing) {
+        req.flash("error", "The requested listing does not exist!");
+        return res.redirect("/listings");
+    }
+    if (!listing.owner.equals(req.user._id)) {
         req.flash("error", "you are not the owner");
         return res.redirect("/listings");
     }
@@ -32,18 +36,17 @@ module.exports.isOwner = async (req, res, next) => {
 module.exports.validateListing = (req, res, next) => {
     let { error } = ListingSchema.validate(req.body);
     if (error) {
-        let errMsg = error.details.map((el) => error.message).join(",");
+        let errMsg = error.details.map((el) => el.message).join(",");
         throw new ExpressError(400, errMsg);
     } else {
         next();
     }
 };
 
-
 module.exports.validateReview = (req, res, next) => {
     let { error } = ReviewSchema.validate(req.body);
     if (error) {
-        let errMsg = error.details.map((el) => error.message).join(",");
+        let errMsg = error.details.map((el) => el.message).join(",");
         throw new ExpressError(400, errMsg);
     } else {
         next();
@@ -53,7 +56,11 @@ module.exports.validateReview = (req, res, next) => {
 module.exports.isAuthor = async (req, res, next) => {
     let { listingId, reviewId } = req.params;
     const review = await Review.findById(reviewId);
-    if (!res.locals.currUser._id.equals(review.author)) {
+    if (!review) {
+        req.flash("error", "The requested review does not exist!");
+        return res.redirect(`/listings/${listingId}`);
+    }
+    if (!review.author.equals(req.user._id)) {
         req.flash("error", "you are not the Author");
         return res.redirect(`/listings/${listingId}`);
     }

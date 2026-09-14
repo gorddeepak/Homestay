@@ -9,7 +9,6 @@ module.exports.userSignup = async (req, res, next) => {
         let { username, email, password } = (req.body)
         const newUser = new User({ email, username });
         const registeredUser = await User.register(newUser, password);
-        console.log(registeredUser);
         req.login(registeredUser, (err) => {
             if (err) {
                 return next(err);
@@ -19,7 +18,7 @@ module.exports.userSignup = async (req, res, next) => {
         })
     } catch (error) {
         req.flash("error", error.message);
-        res.redirect(res.locals.redirectUrl);
+        res.redirect("/signup");
     }
 };
 
@@ -33,7 +32,7 @@ module.exports.userLogin = async (req, res) => {
     res.redirect(redirectUrl);
 };
 
-module.exports.userLogout = (req, res) => {
+module.exports.userLogout = (req, res, next) => {
     req.logOut((err) => {
         if (err) {
             next(err);
