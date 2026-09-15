@@ -67,6 +67,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
+
+// declared before session/passport so pings stay cheap and report app health,
+// not whether the database is reachable
+app.get("/health", (req, res) => {
+    res.json({ ok: true });
+});
+
 app.use(session(sessionOptions));
 app.use(flash());
 app.use(passport.initialize());
@@ -87,11 +94,6 @@ app.use((req, res, next) => {
 
 // home page serves the listings index; /listings keeps working as an alias
 app.get("/", listingController.index);
-
-// lightweight endpoint for cron pingers to keep the free Render instance awake
-app.get("/health", (req, res) => {
-    res.json({ ok: true });
-});
 
 app.use("/listings", listingsRoute);
 app.use("/listings/ai", aiRoute);
