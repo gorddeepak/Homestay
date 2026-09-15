@@ -1,7 +1,7 @@
-<nav class="navbar navbar-expand-md fixed-top homestay-nav <%= (currentPath === '/listings') ? 'navbar-transparent' : '' %>">
+<nav class="navbar navbar-expand-md fixed-top homestay-nav <%= (currentPath === '/' || currentPath === '/listings') ? 'navbar-transparent' : '' %>">
   <div class="container-fluid d-flex align-items-center justify-content-between">
 
-    <a class="navbar-brand d-flex align-items-center" href="/listings">
+    <a class="navbar-brand d-flex align-items-center" href="/">
       <i class="fa-solid fa-circle me-2"></i>
       <span class="brand-name">Homestay</span>
     </a>

@@ -204,13 +204,16 @@ function appendMessage(role, text) {
   return div;
 }
 
-document.getElementById("aiSearchInput").addEventListener("keydown", (e) => {
-  if (e.key === "Enter") sendSearchMessage();
-});
+// ai search bar only exists on the listings index page
+if (document.getElementById("aiSearchInput")) {
+  document.getElementById("aiSearchInput").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") sendSearchMessage();
+  });
 
-document.getElementById("aiSearchBtn").addEventListener("click", async () => {
-  sendSearchMessage();
-});
+  document.getElementById("aiSearchBtn").addEventListener("click", async () => {
+    sendSearchMessage();
+  });
+}
 
 const resultsContainer = document.querySelector(".row.row-cols-1");
 const originalListingsHTML = resultsContainer.innerHTML;
