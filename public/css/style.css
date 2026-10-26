@@ -146,7 +146,6 @@ h6 {
   background: transparent;
   backdrop-filter: none;
   border-bottom: none;
-  --nav-text: var(--linen);
 }
 
 .site-nav.navbar-transparent.scrolled {
@@ -156,15 +155,36 @@ h6 {
   --nav-text: var(--earth);
 }
 
-.site-nav .nav-link,
-.site-nav .brand-name {
+.site-nav .nav-link {
   color: var(--nav-text);
 }
 
+/* Brand logo — inline SVG so the page's webfonts apply */
+.brand-logo {
+  height: 3.1rem;
+  width: auto;
+  display: block;
+}
 
-.brand-name {
-  font-family: var(--font-display);
-  font-weight: 600;
+.footer-logo {
+  width: 13rem;
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.logo-easy,
+.logo-tagline {
+  fill: var(--ink);
+}
+
+.logo-invites,
+.logo-mark-earth {
+  fill: var(--earth);
+}
+
+.logo-mark-sand {
+  fill: var(--sand);
 }
 
 .site-nav .nav-link {
@@ -187,10 +207,6 @@ h6 {
   background: var(--earth);
 }
 
-
-.fa-solid.fa-circle {
-  color: var(--earth) !important;
-}
 
 .site-nav .container-fluid {
   position: relative;
@@ -639,13 +655,6 @@ h6 {
   height: 1.5rem;
   border-radius: 50%;
   background: var(--earth);
-}
-
-.footer-brand-name {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.1rem;
-  color: var(--earth);
 }
 
 .footer-blurb {

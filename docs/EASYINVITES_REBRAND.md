@@ -18,6 +18,9 @@ The rebrand is presentation-only. Routes, data models, auth, AI behavior, and th
 | Internal identifiers | `.homestay-nav` → `.site-nav`, `.homestay-footer` → `.site-footer`, `hero-homestay.jpg` → `hero.jpg` |
 | Package | `package.json` / `package-lock.json` name → `easyinvites` |
 | Docs | README title, description, clone path, and project tree updated |
+| Logo | Brand kit from `easyinvites_negative_space_homes/`; navbar/footer lockups inlined via `views/includes/logo.ejs` |
+| Icons | New favicon set, Apple touch icon, and PWA manifest icons; old 96×96 icon removed |
+| Palette | Brand linen/clay/sand/earth/ink confirmed; manifest colors updated to `#FAF8F5` |
 
 ## Intentionally unchanged
 
@@ -26,11 +29,15 @@ The rebrand is presentation-only. Routes, data models, auth, AI behavior, and th
 - **Generic uses of "homestay"** (common noun) in AI prompts and listing descriptions.
 - **Historical migration documents** under `docs/` — they describe the app as it was audited.
 
+## Logo usage notes
+
+The generated SVG lockups contain live `<text>` referencing Space Grotesk and DM Sans. The PNG lockup exports render with a serif fallback, so they are not used on the site. `views/includes/logo.ejs` inlines the SVG geometry so the page's loaded webfonts apply and the colors can follow the site tokens. Icons are path-only and use the supplied PNG/SVG/ICO files directly.
+
+Navbar color is intentionally constant between the transparent (top of page) and scrolled states: the mark uses sand/earth and the wordmark uses ink/earth in both.
+
 ## Still to do (needs brand/ops inputs)
 
 - [ ] Final spelling/casing decision (`EasyInvites` is used here; docs previously said "Easy Invites")
-- [ ] Logo and favicon/PWA icon set (current icons are a neutral brown circle)
-- [ ] Brand palette (current palette is unchanged)
 - [ ] Production domain, canonical URLs, and `og:url`
 - [ ] Email sender addresses and social handles
 - [ ] Legal/privacy copy review
