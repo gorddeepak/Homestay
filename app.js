@@ -1,6 +1,10 @@
 require("dotenv").config();
 const express = require('express');
 const app = express();
+// Hosts like Render terminate HTTPS at a proxy and forward plain HTTP.
+// Without this, Express reports req.secure === false and express-session
+// silently refuses to set the secure session cookie in production.
+app.set("trust proxy", 1);
 const mongoose = require('mongoose');
 const DB_URL = process.env.ATLAS_DB_URL;
 const path = require("path");
@@ -53,8 +57,9 @@ async function connectToDatabase() {
 function start() {
     return connectToDatabase().then(() => {
         console.log("connected to db");
-        return app.listen(8080, () => {
-            console.log("server is listening on port 8080");
+        const port = process.env.PORT || 8080;
+        return app.listen(port, () => {
+            console.log(`server is listening on port ${port}`);
         });
     })
         .catch((err) => {
