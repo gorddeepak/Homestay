@@ -133,13 +133,44 @@ h6 {
 }
 
 
-/* ── 4. NAVBAR (fixed glass bar) ── */
+/* ── 4. NAVBAR (transparent over the home hero, solid after scroll) ── */
 .site-nav {
   height: 5rem;
   background: rgba(250, 248, 245, 0.95);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(201, 185, 154, 0.2);
   --nav-text: var(--earth);
+  transition: background-color 240ms ease, border-color 240ms ease;
+}
+
+.site-nav.navbar-transparent {
+  background-color: transparent;
+  backdrop-filter: none;
+  border-bottom-color: transparent;
+}
+
+.site-nav.navbar-transparent.scrolled {
+  background-color: rgba(250, 248, 245, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom-color: rgba(201, 185, 154, 0.2);
+}
+
+@media (max-width: 767.98px) {
+  .site-nav.navbar-transparent:not(.scrolled) .navbar-toggler {
+    border-color: rgba(250, 248, 245, 0.55);
+  }
+
+  .site-nav.navbar-transparent:not(.scrolled) .navbar-toggler-icon {
+    filter: invert(1) brightness(2);
+  }
+
+  .site-nav.navbar-transparent:not(.scrolled) .navbar-collapse.show,
+  .site-nav.navbar-transparent:not(.scrolled) .navbar-collapse.collapsing {
+    background: rgba(250, 248, 245, 0.97);
+    backdrop-filter: blur(12px);
+    padding: 1rem;
+    border-radius: 0 0 1rem 1rem;
+  }
 }
 
 .site-nav .nav-link {

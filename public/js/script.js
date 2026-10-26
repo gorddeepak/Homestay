@@ -15,7 +15,24 @@
 })();
 
 
-// ── 2. CATEGORY FILTER TABS ──
+// ── 2. NAVBAR TRANSPARENCY ──
+// The navbar starts transparent over the hero on the home/listing index.
+// After 50px of scrolling it switches to the solid linen glass bar.
+const navbar = document.querySelector('.site-nav');
+
+if (navbar && navbar.classList.contains('navbar-transparent')) {
+  const updateNavbar = () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 50);
+  };
+
+  // Run once in case the page loads already scrolled (e.g. after a redirect)
+  updateNavbar();
+
+  window.addEventListener('scroll', updateNavbar, { passive: true });
+}
+
+
+// ── 3. CATEGORY FILTER TABS ──
 // Targets .listing-col (the Bootstrap col wrapper) which has data-category.
 // The old code targeted .listing-card (the <a> inside) — updated to match new HTML.
 document.querySelectorAll('.category-tab').forEach(tab => {

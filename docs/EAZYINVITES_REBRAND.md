@@ -35,7 +35,7 @@ The generated SVG lockups contain live `<text>` referencing Space Grotesk and DM
 
 The wordmark is lowercase `eazyinvites` in every lockup, per the brand kit. The navbar uses the compact lockup without the tagline; the footer uses the primary lockup with the tagline.
 
-Navbar styling is constant at every scroll position: the bar uses the solid linen glass background with ink/earth logo and nav text from first paint, rather than starting transparent/white over the home hero.
+On the home and listings index pages, the navbar is transparent over the hero at the top of the page and switches to the solid linen glass bar after 50px of scrolling. Logo and nav text keep the same ink/earth colors in both states.
 
 ## Still to do (needs brand/ops inputs)
 
