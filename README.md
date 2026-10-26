@@ -1,6 +1,6 @@
-# EasyInvites 🏡
+# EazyInvites 🏡
 
-EasyInvites is a full-stack accommodation booking platform inspired by Airbnb. It lets users list, discover and review unique homes to stay in. The project demonstrates auth, CRUD, file uploads, geolocation, and practical AI integrations: an AI listing description generator, a conversational chatbot, and natural-language search (powered by Google Gemini via the Vercel AI SDK).
+EazyInvites is a full-stack accommodation booking platform inspired by Airbnb. It lets users list, discover and review unique homes to stay in. The project demonstrates auth, CRUD, file uploads, geolocation, and practical AI integrations: an AI listing description generator, a conversational chatbot, and natural-language search (powered by Google Gemini via the Vercel AI SDK).
 
 ## ✨ Features
 
@@ -46,8 +46,8 @@ EasyInvites is a full-stack accommodation booking platform inspired by Airbnb. I
 ### Install
 
 ```bash
-git clone https://github.com/<your-username>/easyinvites.git
-cd easyinvites
+git clone https://github.com/<your-username>/eazyinvites.git
+cd eazyinvites
 npm install
 ```
 
@@ -114,7 +114,7 @@ The seeder clears Reviews → Listings → Users then inserts sample data.
 ## Project Structure
 
 ```
-easyinvites/
+eazyinvites/
 ├── init/              # Database seeding scripts and sample data
 ├── models/            # Mongoose schemas (Listing, Review, User)
 ├── routes/            # Express route handlers
