@@ -33,7 +33,7 @@ The rebrand is presentation-only. Routes, data models, auth, AI behavior, and th
 
 The generated SVG lockups contain live `<text>` referencing Space Grotesk and DM Sans. The PNG lockup exports render with a serif fallback, so they are not used on the site. `views/includes/logo.ejs` inlines the SVG geometry so the page's loaded webfonts apply and the colors can follow the site tokens. Icons are path-only and use the supplied PNG/SVG/ICO files directly.
 
-Navbar color is intentionally constant between the transparent (top of page) and scrolled states: the mark uses sand/earth and the wordmark uses ink/earth in both.
+Navbar styling is constant at every scroll position: the bar uses the solid linen glass background with ink/earth logo and nav text from first paint, rather than starting transparent/white over the home hero.
 
 ## Still to do (needs brand/ops inputs)
 

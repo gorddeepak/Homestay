@@ -15,28 +15,7 @@
 })();
 
 
-// ── 2. NAVBAR TRANSPARENCY + SCROLL ──
-// On the homepage the navbar starts transparent (over the hero).
-// Once the user scrolls past 50px, add .scrolled to switch to solid.
-const navbar = document.querySelector('.site-nav');
-
-if (navbar && navbar.classList.contains('navbar-transparent')) {
-  // Run once on load in case page is already scrolled (e.g. after redirect)
-  if (window.scrollY > 50) {
-    navbar.classList.add('scrolled');
-  }
-
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-      navbar.classList.add('scrolled');
-    } else {
-      navbar.classList.remove('scrolled');
-    }
-  });
-}
-
-
-// ── 3. CATEGORY FILTER TABS ──
+// ── 2. CATEGORY FILTER TABS ──
 // Targets .listing-col (the Bootstrap col wrapper) which has data-category.
 // The old code targeted .listing-card (the <a> inside) — updated to match new HTML.
 document.querySelectorAll('.category-tab').forEach(tab => {

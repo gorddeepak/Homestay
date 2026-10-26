@@ -133,22 +133,9 @@ h6 {
 }
 
 
-/* ── 4. NAVBAR (glass + transparent-on-homepage) ── */
+/* ── 4. NAVBAR (fixed glass bar) ── */
 .site-nav {
   height: 5rem;
-  background: rgba(250, 248, 245, 0.95);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(201, 185, 154, 0.2);
-  --nav-text: var(--earth);
-}
-
-.site-nav.navbar-transparent {
-  background: transparent;
-  backdrop-filter: none;
-  border-bottom: none;
-}
-
-.site-nav.navbar-transparent.scrolled {
   background: rgba(250, 248, 245, 0.95);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(201, 185, 154, 0.2);
