@@ -1,0 +1,2014 @@
+{
+  "catalog_version": "1.0.0",
+  "generated_at": "2026-10-25",
+  "generated_by": "Read-only repository audit of Homestay",
+  "repository": {
+    "name": "homestay",
+    "root": "D:/deepak/coding/Full Stack Dev/Airbnb",
+    "branch": "main",
+    "commit": "0629cb0",
+    "runtime": "Node.js 22.22.2 (declared in package.json engines)",
+    "database_driver": "Mongoose 9.6.2 / MongoDB",
+    "application_entry_point": "app.js",
+    "scope_note": "Catalog derived only from repository source and installed package metadata. No database connection was made and no production documents were read."
+  },
+  "confidence_definitions": {
+    "high": "Directly declared in an explicit Mongoose schema, a route/controller assignment, or library source that is installed in this repository.",
+    "medium": "Strongly implied by application code, seed data, or a library default, but not declared by an application-level schema in this repository.",
+    "low": "Inferred from usage or naming only; the exact deployed shape may differ.",
+    "unknown": "Not determinable from the repository without database access or production configuration."
+  },
+  "structure_source_definitions": {
+    "explicit_schema": "Fields and constraints are declared in a Mongoose schema file.",
+    "explicit_schema_plus_library_fields": "The application declares a Mongoose schema, and an installed library (for example passport-local-mongoose) adds additional fields or indexes.",
+    "seed_data": "Fields are visible in the seeding data, but may not all be enforced by a model.",
+    "inference": "Fields are inferred from route handlers, controllers, views, or query usage rather than a schema.",
+    "library_defined": "Document shape is created by an installed library rather than an application model."
+  },
+  "conventions": {
+    "collection_naming": "Mongoose default pluralization and lower-casing of model names. Verified model names are Listing, Review, User; the session store uses the connect-mongo default collection name.",
+    "object_id_serialization": "MongoDB ObjectIds are serialized as strings by Mongoose toJSON/virtuals and by EJS rendering. The API migration must preserve string IDs.",
+    "timestamps": "No application model declares timestamps: true. Only reviews have an application-managed createdAt. Sessions have library-managed expires and lastModified fields.",
+    "validation_layers": "Mongoose constraints are the persistence layer. Joi schemas in schema.js validate HTTP form bodies only; they do not protect the seeder or direct database writes. passport-local-mongoose adds authentication fields and a username uniqueness constraint.",
+    "no_synthetic_records": true,
+    "sensitive_data_policy": "This catalog lists field names and shapes only. It intentionally contains no API keys, passwords, hashes, session identifiers, connection strings, or real user records."
+  },
+  "collections": [
+    {
+      "name": "listings",
+      "mongodb_collection": "listings",
+      "model": "Listing",
+      "source_files": [
+        "models/listing.js",
+        "schema.js",
+        "controllers/listing.js",
+        "routes/listing.js",
+        "controllers/ai.js",
+        "init/data.js",
+        "init/index.js",
+        "views/listings/index.ejs",
+        "views/listings/show.ejs",
+        "views/includes/listing.ejs"
+      ],
+      "structure_source": "explicit_schema",
+      "confidence": "high",
+      "purpose": "Accommodation listing. Stores display content, nightly price in INR, Cloudinary image reference, GeoJSON point, category, owner reference, and references to its reviews.",
+      "timestamps": {
+        "createdAt": {
+          "present": false,
+          "reason": "Schema does not declare timestamps: true.",
+          "confidence": "high"
+        },
+        "updatedAt": {
+          "present": false,
+          "reason": "Schema does not declare timestamps: true.",
+          "confidence": "high"
+        }
+      },
+      "fields": [
+        {
+          "name": "_id",
+          "path": "_id",
+          "type": "ObjectId",
+          "bson_type": "objectId",
+          "required": true,
+          "required_by": ["mongodb"],
+          "nullable": false,
+          "default": "auto-generated ObjectId",
+          "default_kind": "auto",
+          "enum": null,
+          "validation": {
+            "mongodb": "Primary key"
+          },
+          "references": null,
+          "indexed": true,
+          "index_role": "primary key (_id_)",
+          "persisted": true,
+          "evidence": [
+            {
+              "source": "models/listing.js",
+              "lines": "64",
+              "detail": "mongoose.model('Listing', ListingSchema)"
+            }
+          ],
+          "confidence": "high"
+        },
+        {
+          "name": "title",
+          "path": "title",
+          "type": "string",
+          "bson_type": "string",
+          "required": true,
+          "required_by": ["mongoose"],
+          "nullable": false,
+          "default": null,
+          "default_kind": "none",
+          "enum": null,
+          "validation": {
+            "mongoose": {
+              "required": true,
+              "type": "String"
+            },
+            "route_joi": {
+              "required": true,
+              "type": "string"
+            }
+          },
+          "references": null,
+          "indexed": false,
+          "persisted": true,
+          "evidence": [
+            {
+              "source": "models/listing.js",
+              "lines": "8-11",
+              "detail": "title: { type: String, required: true }"
+            },
+            {
+              "source": "schema.js",
+              "lines": "22",
+              "detail": "title: Joi.string().required()"
+            }
+          ],
+          "confidence": "high"
+        },
+        {
+          "name": "description",
+          "path": "description",
+          "type": "string",
+          "bson_type": "string",
+          "required": false,
+          "required_by": [],
+          "nullable": true,
+          "default": null,
+          "default_kind": "none",
+          "enum": null,
+          "validation": {
+            "mongoose": {
+              "type": "String"
+            },
+            "route_joi": {
+              "required": true,
+              "type": "string"
+            }
+          },
+          "references": null,
+          "indexed": false,
+          "persisted": true,
+          "evidence": [
+            {
+              "source": "models/listing.js",
+              "lines": "12",
+              "detail": "description: String"
+            },
+            {
+              "source": "schema.js",
+              "lines": "23",
+              "detail": "description: Joi.string().required()"
+            }
+          ],
+          "confidence": "high",
+          "notes": "Required for HTTP create/update through Joi, optional for direct Mongoose writes."
+        },
+        {
+          "name": "image",
+          "path": "image",
+          "type": "object",
+          "bson_type": "object",
+          "required": false,
+          "required_by": [],
+          "nullable": true,
+          "default": null,
+          "default_kind": "none",
+          "enum": null,
+          "validation": {
+            "mongoose": {
+              "type": "nested object; no subdocument schema"
+            }
+          },
+          "references": null,
+          "indexed": false,
+          "persisted": true,
+          "evidence": [
+            {
+              "source": "models/listing.js",
+              "lines": "13-16",
+              "detail": "image: { url: String, filename: String }"
+            }
+          ],
+          "confidence": "high",
+          "notes": "Because this is a nested path rather than a subdocument schema, it has no separate _id. Application code assumes image and image.url are present in index, show, and partial views."
+        },
+        {
+          "name": "image.url",
+          "path": "image.url",
+          "type": "string",
+          "bson_type": "string",
+          "required": false,
+          "required_by": [],
+          "nullable": true,
+          "default": null,
+          "default_kind": "none",
+          "enum": null,
+          "validation": {
+            "mongoose": {
+              "type": "String"
+            }
+          },
+          "references": null,
+          "indexed": false,
+          "persisted": true,
+          "evidence": [
+            {
+              "source": "models/listing.js",
+              "lines": "14",
+              "detail": "url: String"
+            },
+            {
+              "source": "controllers/listing.js",
+              "lines": "29-31",
+              "detail": "req.file.path is written to image.url on update"
+            }
+          ],
+          "confidence": "high",
+          "notes": "Can be a Cloudinary HTTPS URL or a repository-local /images/*.png path from seed data. Not validated as a URL."
+        },
+        {
+          "name": "image.filename",
+          "path": "image.filename",
+          "type": "string",
+          "bson_type": "string",
+          "required": false,
+          "required_by": [],
+          "nullable": true,
+          "default": null,
+          "default_kind": "none",
+          "enum": null,
+          "validation": {
+            "mongoose": {
+              "type": "String"
+            }
+          },
+          "references": null,
+          "indexed": false,
+          "persisted": true,
+          "evidence": [
+            {
+              "source": "models/listing.js",
+              "lines": "15",
+              "detail": "filename: String"
+            },
+            {
+              "source": "controllers/listing.js",
+              "lines": "65-70",
+              "detail": "filename and url from multer/Cloudinary are assigned on create"
+            }
+          ],
+          "confidence": "high",
+          "notes": "Cloudinary public identifier used only for storage; no asset deletion logic exists."
+        },
+        {
+          "name": "price",
+          "path": "price",
+          "type": "number",
+          "bson_type": "number",
+          "required": false,
+          "required_by": [],
+          "nullable": true,
+          "default": null,
+          "default_kind": "none",
+          "enum": null,
+          "validation": {
+            "mongoose": {
+              "type": "Number",
+              "min": null,
+              "max": null
+            },
+            "route_joi": {
+              "required": true,
+              "type": "number",
+              "integer": true
+            }
+          },
+          "references": null,
+          "indexed": false,
+          "persisted": true,
+          "evidence": [
+            {
+              "source": "models/listing.js",
+              "lines": "17",
+              "detail": "price: Number"
+            },
+            {
+              "source": "schema.js",
+              "lines": "25",
+              "detail": "price: Joi.number().integer().required()"
+            },
+            {
+              "source": "views/includes/listing.ejs",
+              "lines": "15-17",
+              "detail": "price is formatted as INR per night"
+            }
+          ],
+          "confidence": "high",
+          "notes": "No schema minimum, maximum, or currency field. Seed range is 4,000 to 100,000. Integer enforcement exists only in the Joi HTTP validation layer."
+        },
+        {
+          "name": "location",
+          "path": "location",
+          "type": "string",
+          "bson_type": "string",
+          "required": false,
+          "required_by": [],
+          "nullable": true,
+          "default": null,
+          "default_kind": "none",
+          "enum": null,
+          "validation": {
+            "mongoose": {
+              "type": "String"
+            },
+            "route_joi": {
+              "required": true,
+              "type": "string"
+            }
+          },
+          "references": null,
+          "indexed": false,
+          "persisted": true,
+          "evidence": [
+            {
+              "source": "models/listing.js",
+              "lines": "18",
+              "detail": "location: String"
+            },
+            {
+              "source": "schema.js",
+              "lines": "26",
+              "detail": "location: Joi.string().required()"
+            }
+          ],
+          "confidence": "high",
+          "notes": "Free text. Used by regex searches in AI tools and by MapTiler forward geocoding."
+        },
+        {
+          "name": "country",
+          "path": "country",
+          "type": "string",
+          "bson_type": "string",
+          "required": false,
+          "required_by": [],
+          "nullable": true,
+          "default": null,
+          "default_kind": "none",
+          "enum": null,
+          "validation": {
+            "mongoose": {
+              "type": "String"
+            },
+            "route_joi": {
+              "required": true,
+              "type": "string"
+            }
+          },
+          "references": null,
+          "indexed": false,
+          "persisted": true,
+          "evidence": [
+            {
+              "source": "models/listing.js",
+              "lines": "19",
+              "detail": "country: String"
+            },
+            {
+              "source": "schema.js",
+              "lines": "27",
+              "detail": "country: Joi.string().required()"
+            }
+          ],
+          "confidence": "high",
+          "notes": "Free text. AI prompts specifically instruct the model to expand country abbreviations, but the data itself has no country-code field."
+        },
+        {
+          "name": "geometry",
+          "path": "geometry",
+          "type": "object",
+          "bson_type": "object",
+          "required": false,
+          "required_by": [],
+          "nullable": true,
+          "default": null,
+          "default_kind": "none",
+          "enum": null,
+          "validation": {
+            "mongoose": {
+              "type": "nested object; no subdocument schema"
+            }
+          },
+          "references": null,
+          "indexed": false,
+          "persisted": true,
+          "evidence": [
+            {
+              "source": "models/listing.js",
+              "lines": "20-30",
+              "detail": "geometry: { type: { enum: ['Point'], required: true }, coordinates: { type: [Number], required: true } }"
+            }
+          ],
+          "confidence": "high",
+          "notes": "GeoJSON Point. There is no parent-level required flag, but the nested required type and coordinates paths make geometry effectively mandatory under Mongoose document validation (validated even when geometry is absent). Raw/legacy MongoDB documents may still omit it because MongoDB does not enforce the schema. No 2dsphere index is declared."
+        },
+        {
+          "name": "geometry.type",
+          "path": "geometry.type",
+          "type": "string",
+          "bson_type": "string",
+          "required": true,
+          "required_by": ["mongoose (nested required path; validated even when geometry is absent)"],
+          "nullable": false,
+          "default": null,
+          "default_kind": "none",
+          "enum": ["Point"],
+          "validation": {
+            "mongoose": {
+              "enum": ["Point"],
+              "required": true
+            }
+          },
+          "references": null,
+          "indexed": false,
+          "persisted": true,
+          "evidence": [
+            {
+              "source": "models/listing.js",
+              "lines": "21-25",
+              "detail": "type: { type: String, enum: ['Point'], required: true }"
+            }
+          ],
+          "confidence": "high"
+        },
+        {
+          "name": "geometry.coordinates",
+          "path": "geometry.coordinates",
+          "type": "array<number>",
+          "bson_type": "array<number>",
+          "required": true,
+          "required_by": ["mongoose (nested required path; validated even when geometry is absent)"],
+          "nullable": false,
+          "default": null,
+          "default_kind": "none",
+          "enum": null,
+          "validation": {
+            "mongoose": {
+              "type": "[Number]",
+              "required": true,
+              "length": "not declared"
+            },
+            "geojson": "Expected [longitude, latitude] for a Point"
+          },
+          "references": null,
+          "indexed": false,
+          "persisted": true,
+          "evidence": [
+            {
+              "source": "models/listing.js",
+              "lines": "26-29",
+              "detail": "coordinates: { type: [Number], required: true }"
+            },
+            {
+              "source": "public/js/map.js",
+              "lines": "1-6",
+              "detail": "coordinates are passed directly to MapLibre as map center"
+            }
+          ],
+          "confidence": "high",
+          "notes": "No length, range, or GeoJSON validator. Seed data uses [longitude, latitude]. The MapTiler forward-geocoding result is stored directly, with no application validation of coordinate ranges."
+        },
+        {
+          "name": "category",
+          "path": "category",
+          "type": "string",
+          "bson_type": "string",
+          "required": true,
+          "required_by": ["mongoose"],
+          "nullable": false,
+          "default": null,
+          "default_kind": "none",
+          "enum": [
+            "Mountain Escape",
+            "Lakefront Retreat",
+            "Snowy Peaks",
+            "Coastal Haven",
+            "Woodland Hideaway",
+            "Desert Sanctuary",
+            "Rural Charm",
+            "Urban Oasis",
+            "Hill Station",
+            "Heritage Homestay",
+            "Houseboat"
+          ],
+          "validation": {
+            "mongoose": {
+              "required": true,
+              "enum": "CATEGORIES from schema.js"
+            },
+            "route_joi": {
+              "required": true,
+              "valid": "same 11 values"
+            }
+          },
+          "references": null,
+          "indexed": false,
+          "persisted": true,
+          "evidence": [
+            {
+              "source": "models/listing.js",
+              "lines": "31-35",
+              "detail": "category: { type: String, required: true, enum: CATEGORIES }"
+            },
+            {
+              "source": "schema.js",
+              "lines": "4-16",
+              "detail": "single source of truth CATEGORIES array"
+            }
+          ],
+          "confidence": "high",
+          "notes": "Data contains all 11 categories, but the new and edit EJS forms expose only 8 of them. Editing a Hill Station, Heritage Homestay, or Houseboat listing causes the current category not to match any selected option."
+        },
+        {
+          "name": "review",
+          "path": "review",
+          "type": "array<ObjectId>",
+          "bson_type": "array<objectId>",
+          "required": false,
+          "required_by": [],
+          "nullable": true,
+          "default": "[] (Mongoose array default)",
+          "default_kind": "implicit",
+          "enum": null,
+          "validation": {
+            "mongoose": {
+              "type": "[{ type: Schema.Types.ObjectId, ref: 'Review' }]"
+            }
+          },
+          "references": {
+            "collection": "reviews",
+            "field": "_id",
+            "relationship": "one-to-many, stored as an array of references"
+          },
+          "indexed": false,
+          "persisted": true,
+          "evidence": [
+            {
+              "source": "models/listing.js",
+              "lines": "36-41",
+              "detail": "review: [{ type: Schema.Types.ObjectId, ref: 'Review' }]"
+            },
+            {
+              "source": "controllers/review.js",
+              "lines": "4-12",
+              "detail": "new review is pushed onto listing.review"
+            }
+          ],
+          "confidence": "high",
+          "notes": "This is an array of references, not embedded review subdocuments. There is no database foreign key. Duplicate references are possible. A missing referenced Review produces a populate null and can break the averageRating virtual."
+        },
+        {
+          "name": "owner",
+          "path": "owner",
+          "type": "ObjectId",
+          "bson_type": "objectId",
+          "required": false,
+          "required_by": [],
+          "nullable": true,
+          "default": null,
+          "default_kind": "none",
+          "enum": null,
+          "validation": {
+            "mongoose": {
+              "type": "Schema.Types.ObjectId",
+              "ref": "User"
+            }
+          },
+          "references": {
+            "collection": "users",
+            "field": "_id",
+            "relationship": "many-to-one"
+          },
+          "indexed": false,
+          "persisted": true,
+          "evidence": [
+            {
+              "source": "models/listing.js",
+              "lines": "42-45",
+              "detail": "owner: { type: Schema.Types.ObjectId, ref: 'User' }"
+            },
+            {
+              "source": "controllers/listing.js",
+              "lines": "67-70",
+              "detail": "newListing.owner = req.user._id"
+            }
+          ],
+          "confidence": "high",
+          "notes": "Not required by the schema, but always assigned by the HTTP create path and the seeder. isOwner middleware assumes owner exists and calls listing.owner.equals(...), which throws if owner is missing."
+        },
+        {
+          "name": "__v",
+          "path": "__v",
+          "type": "number",
+          "bson_type": "number",
+          "required": false,
+          "required_by": [],
+          "nullable": true,
+          "default": 0,
+          "default_kind": "declared_by_mongoose_default",
+          "enum": null,
+          "validation": {
+            "mongoose": "Version key enabled by default"
+          },
+          "references": null,
+          "indexed": false,
+          "persisted": true,
+          "evidence": [
+            {
+              "source": "models/listing.js",
+              "lines": "7-46",
+              "detail": "No versionKey: false option; Mongoose default applies"
+            }
+          ],
+          "confidence": "high",
+          "notes": "Mongoose internal document version key. Not part of the business schema."
+        }
+      ],
+      "virtual_fields": [
+        {
+          "name": "averageRating",
+          "path": "averageRating",
+          "type": "string|null",
+          "persisted": false,
+          "computed_by": "ListingSchema.virtual",
+          "formula": "If review is empty, null. If review[0].rating is undefined (not populated), null. Otherwise sum(rating) / review.length, formatted with toFixed(1), therefore a string such as '4.5'.",
+          "dependencies": ["review array must be populated with Review documents"],
+          "source": "models/listing.js",
+          "lines": "48-56",
+          "confidence": "high",
+          "notes": "Because toFixed(1) returns a string, API consumers should expect a string, not a number. It is available only when the caller populates review. The AI search partial uses Listing.find without populate, so it does not display ratings."
+        }
+      ],
+      "indexes": [
+        {
+          "name": "_id_",
+          "keys": {"_id": 1},
+          "unique": true,
+          "ttl": false,
+          "source": "MongoDB primary key",
+          "confidence": "high"
+        }
+      ],
+      "relationships": [
+        {
+          "field": "owner",
+          "target_collection": "users",
+          "target_field": "_id",
+          "cardinality": "many-to-one",
+          "required": false,
+          "enforced_by": "application only; Mongoose populate",
+          "on_delete": "No cascade or nulling implemented",
+          "source": "models/listing.js",
+          "lines": "42-45",
+          "confidence": "high"
+        },
+        {
+          "field": "review[]",
+          "target_collection": "reviews",
+          "target_field": "_id",
+          "cardinality": "one-to-many",
+          "required": false,
+          "enforced_by": "application only; Mongoose populate",
+          "on_delete": "Listing post(findOneAndDelete) deletes all referenced Review documents",
+          "source": "models/listing.js",
+          "lines": "36-41, 58-62",
+          "confidence": "high"
+        }
+      ],
+      "cascades": [
+        {
+          "trigger": "Listing.findOneAndDelete / Listing.findByIdAndDelete",
+          "action": "Review.deleteMany({ _id: { $in: listing.review } })",
+          "source": "models/listing.js",
+          "lines": "58-62",
+          "confidence": "high",
+          "notes": "Only runs through Mongoose findOneAndDelete middleware. Direct MongoDB deletes bypass it. Cloudinary assets are not deleted."
+        }
+      ],
+      "constraints": [
+        {
+          "type": "required",
+          "fields": ["title", "category"],
+          "source": "models/listing.js",
+          "confidence": "high"
+        },
+        {
+          "type": "enum",
+          "field": "category",
+          "values": "11 CATEGORIES values from schema.js",
+          "source": "models/listing.js",
+          "confidence": "high"
+        },
+        {
+          "type": "required",
+          "fields": ["geometry.type", "geometry.coordinates"],
+          "source": "models/listing.js",
+          "confidence": "high",
+          "notes": "Nested required paths are validated by Mongoose even when the parent geometry object is absent, so new/validated listing documents cannot omit geometry. Raw MongoDB writes bypass this."
+        },
+        {
+          "type": "route-validation-only",
+          "fields": ["description", "price", "location", "country"],
+          "source": "schema.js",
+          "confidence": "high",
+          "notes": "These are required by Joi on create/update but optional in the Mongoose schema."
+        }
+      ],
+      "data_dependencies": [
+        "Views listings/index.ejs, listings/show.ejs, and includes/listing.ejs assume image.url and price exist.",
+        "Show view assumes owner is populated and owner.username exists.",
+        "Review cards assume each populated review has an author with username.",
+        "Map view supplies geometry.coordinates or a hard-coded fallback of [77.209, 28.6139].",
+        "AI search and chat tools read title, location, country, price, category, and populated review fields."
+      ],
+      "notes": [
+        "Seed data contains 49 listings across all 11 categories, with 185 generated reviews in total and 3 or 4 reviews per listing.",
+        "Seed images use 21 local /images/*.png assets and 28 remote image URLs.",
+        "No pagination or server-side category filter exists; the index loads every listing and populates all reviews.",
+        "No text index, category index, price index, owner index, or 2dsphere geometry index is declared."
+      ]
+    },
+    {
+      "name": "reviews",
+      "mongodb_collection": "reviews",
+      "model": "Review",
+      "source_files": [
+        "models/review.js",
+        "controllers/review.js",
+        "routes/review.js",
+        "middleware.js",
+        "schema.js",
+        "init/data.js",
+        "init/index.js",
+        "views/listings/show.ejs"
+      ],
+      "structure_source": "explicit_schema",
+      "confidence": "high",
+      "purpose": "Guest review for a listing. Stores a 1-5 rating, comment, creation date, and author reference. The listing-to-review relationship is stored on the Listing document, not on the Review.",
+      "timestamps": {
+        "createdAt": {
+          "present": true,
+          "field": "createdAt",
+          "default": "Date.now",
+          "managed_by": "application schema",
+          "confidence": "high"
+        },
+        "updatedAt": {
+          "present": false,
+          "reason": "Schema does not declare timestamps: true.",
+          "confidence": "high"
+        }
+      },
+      "fields": [
+        {
+          "name": "_id",
+          "path": "_id",
+          "type": "ObjectId",
+          "bson_type": "objectId",
+          "required": true,
+          "required_by": ["mongodb"],
+          "nullable": false,
+          "default": "auto-generated ObjectId",
+          "default_kind": "auto",
+          "enum": null,
+          "validation": {
+            "mongodb": "Primary key"
+          },
+          "references": null,
+          "indexed": true,
+          "index_role": "primary key (_id_)",
+          "persisted": true,
+          "evidence": [
+            {
+              "source": "models/review.js",
+              "lines": "21",
+              "detail": "mongoose.model('Review', reviewSchema)"
+            }
+          ],
+          "confidence": "high"
+        },
+        {
+          "name": "rating",
+          "path": "rating",
+          "type": "number",
+          "bson_type": "number",
+          "required": false,
+          "required_by": [],
+          "nullable": true,
+          "default": null,
+          "default_kind": "none",
+          "enum": null,
+          "validation": {
+            "mongoose": {
+              "type": "Number",
+              "min": 1,
+              "max": 5
+            },
+            "route_joi": {
+              "required": true,
+              "type": "number",
+              "integer": true,
+              "min": 1,
+              "max": 5
+            }
+          },
+          "references": null,
+          "indexed": false,
+          "persisted": true,
+          "evidence": [
+            {
+              "source": "models/review.js",
+              "lines": "5-9",
+              "detail": "rating: { type: Number, min: 1, max: 5 }"
+            },
+            {
+              "source": "schema.js",
+              "lines": "34",
+              "detail": "rating: Joi.number().integer().min(1).max(5).required()"
+            }
+          ],
+          "confidence": "high",
+          "notes": "Mongoose does not enforce integer, only the Joi route layer does. The review form's 'no-rate' radio is checked and has value 1, so submitting without choosing a star still stores a rating of 1."
+        },
+        {
+          "name": "comment",
+          "path": "comment",
+          "type": "string",
+          "bson_type": "string",
+          "required": false,
+          "required_by": [],
+          "nullable": true,
+          "default": null,
+          "default_kind": "none",
+          "enum": null,
+          "validation": {
+            "mongoose": {
+              "type": "String"
+            },
+            "route_joi": {
+              "required": true,
+              "type": "string"
+            }
+          },
+          "references": null,
+          "indexed": false,
+          "persisted": true,
+          "evidence": [
+            {
+              "source": "models/review.js",
+              "lines": "10",
+              "detail": "comment: String"
+            },
+            {
+              "source": "schema.js",
+              "lines": "35",
+              "detail": "comment: Joi.string().required()"
+            }
+          ],
+          "confidence": "high"
+        },
+        {
+          "name": "createdAt",
+          "path": "createdAt",
+          "type": "date",
+          "bson_type": "date",
+          "required": false,
+          "required_by": [],
+          "nullable": true,
+          "default": "Date.now",
+          "default_kind": "declared",
+          "enum": null,
+          "validation": {
+            "mongoose": {
+              "type": "Date",
+              "default": "Date.now"
+            },
+            "route_joi": {
+              "type": "date",
+              "required": false
+            }
+          },
+          "references": null,
+          "indexed": false,
+          "persisted": true,
+          "evidence": [
+            {
+              "source": "models/review.js",
+              "lines": "11-14",
+              "detail": "createdAt: { type: Date, default: Date.now }"
+            },
+            {
+              "source": "init/index.js",
+              "lines": "78-83, 97-102",
+              "detail": "Seeder overrides createdAt with a random past date"
+            }
+          ],
+          "confidence": "high",
+          "notes": "Only review creation time exists; there is no updatedAt. Seed dates are random between six months ago and now."
+        },
+        {
+          "name": "author",
+          "path": "author",
+          "type": "ObjectId",
+          "bson_type": "objectId",
+          "required": false,
+          "required_by": [],
+          "nullable": true,
+          "default": null,
+          "default_kind": "none",
+          "enum": null,
+          "validation": {
+            "mongoose": {
+              "type": "Schema.Types.ObjectId",
+              "ref": "User"
+            }
+          },
+          "references": {
+            "collection": "users",
+            "field": "_id",
+            "relationship": "many-to-one"
+          },
+          "indexed": false,
+          "persisted": true,
+          "evidence": [
+            {
+              "source": "models/review.js",
+              "lines": "15-18",
+              "detail": "author: { type: Schema.Types.ObjectId, ref: 'User' }"
+            },
+            {
+              "source": "controllers/review.js",
+              "lines": "4-10",
+              "detail": "newReview.author = res.locals.currUser._id"
+            }
+          ],
+          "confidence": "high",
+          "notes": "Not required by Mongoose but assigned by the HTTP create path and seeder. Show view assumes author is populated and has a username."
+        },
+        {
+          "name": "__v",
+          "path": "__v",
+          "type": "number",
+          "bson_type": "number",
+          "required": false,
+          "required_by": [],
+          "nullable": true,
+          "default": 0,
+          "default_kind": "declared_by_mongoose_default",
+          "enum": null,
+          "validation": {
+            "mongoose": "Version key enabled by default"
+          },
+          "references": null,
+          "indexed": false,
+          "persisted": true,
+          "evidence": [
+            {
+              "source": "models/review.js",
+              "lines": "4-19",
+              "detail": "No versionKey: false option"
+            }
+          ],
+          "confidence": "high"
+        }
+      ],
+      "virtual_fields": [],
+      "indexes": [
+        {
+          "name": "_id_",
+          "keys": {"_id": 1},
+          "unique": true,
+          "ttl": false,
+          "source": "MongoDB primary key",
+          "confidence": "high"
+        }
+      ],
+      "relationships": [
+        {
+          "field": "author",
+          "target_collection": "users",
+          "target_field": "_id",
+          "cardinality": "many-to-one",
+          "required": false,
+          "enforced_by": "application only; Mongoose populate",
+          "on_delete": "No cascade or nulling implemented",
+          "source": "models/review.js",
+          "lines": "15-18",
+          "confidence": "high"
+        },
+        {
+          "field": "no listing back-reference",
+          "target_collection": "listings",
+          "target_field": "review[]",
+          "cardinality": "many-to-one conceptually, but not stored on Review",
+          "required": false,
+          "enforced_by": "application only",
+          "on_delete": "Listing deletion deletes referenced reviews; deleting a review pulls its ID from the listing",
+          "source": "models/review.js",
+          "lines": "4-19",
+          "confidence": "high",
+          "notes": "A Review document cannot be traced to its listing without scanning listings.review. This prevents efficient listing-scoped review queries and allows orphan Review documents."
+        }
+      ],
+      "cascades": [
+        {
+          "trigger": "Listing.findByIdAndDelete",
+          "action": "Delete all Review documents whose _id is in the listing's review array",
+          "source": "models/listing.js",
+          "lines": "58-62",
+          "confidence": "high"
+        },
+        {
+          "trigger": "Review deletion route",
+          "action": "Pull reviewId from the supplied listingId, then delete the Review document",
+          "source": "controllers/review.js",
+          "lines": "15-20",
+          "confidence": "high",
+          "notes": "The handler does not verify that the review belongs to the supplied listingId. This can leave a dangling reference on the review's real listing."
+        }
+      ],
+      "constraints": [
+        {
+          "type": "range",
+          "field": "rating",
+          "min": 1,
+          "max": 5,
+          "source": "models/review.js",
+          "confidence": "high"
+        },
+        {
+          "type": "route-validation-only",
+          "fields": ["rating", "comment"],
+          "source": "schema.js",
+          "confidence": "high",
+          "notes": "Mongoose allows missing rating and comment for direct writes."
+        }
+      ],
+      "data_dependencies": [
+        "Listing.review[] is the only listing association.",
+        "Views/listings/show.ejs populates review.author and dereferences author.username.",
+        "AI getListingReviews tool populates review and returns rating/comment; it does not need author.",
+        "Average rating is computed in application code from populated reviews; it is not stored."
+      ],
+      "notes": [
+        "Seed review pool has 46 unique review texts; the seeder creates 185 review documents by reusing pool entries.",
+        "Review create is not transactional: the review is saved before the listing array is saved.",
+        "Review delete is not transactional: the array pull and document delete can diverge.",
+        "No review text length limit, moderation flag, edit path, or unique-per-user-per-listing constraint exists."
+      ]
+    },
+    {
+      "name": "users",
+      "mongodb_collection": "users",
+      "model": "User",
+      "source_files": [
+        "models/user.js",
+        "controllers/user.js",
+        "routes/user.js",
+        "middleware.js",
+        "init/index.js",
+        "app.js"
+      ],
+      "structure_source": "explicit_schema_plus_library_fields",
+      "confidence": "high",
+      "purpose": "Local username/password account. passport-local-mongoose adds username, password hash, and salt fields and the authentication behavior.",
+      "timestamps": {
+        "createdAt": {
+          "present": false,
+          "reason": "Schema does not declare timestamps: true; plugin does not add timestamps by default.",
+          "confidence": "high"
+        },
+        "updatedAt": {
+          "present": false,
+          "reason": "Schema does not declare timestamps: true; plugin does not add timestamps by default.",
+          "confidence": "high"
+        },
+        "lastLogin": {
+          "present": false,
+          "reason": "passport-local-mongoose lastLoginField is only added when limitAttempts is enabled; default limitAttempts is false.",
+          "confidence": "high"
+        }
+      },
+      "fields": [
+        {
+          "name": "_id",
+          "path": "_id",
+          "type": "ObjectId",
+          "bson_type": "objectId",
+          "required": true,
+          "required_by": ["mongodb"],
+          "nullable": false,
+          "default": "auto-generated ObjectId",
+          "default_kind": "auto",
+          "enum": null,
+          "validation": {
+            "mongodb": "Primary key"
+          },
+          "references": null,
+          "indexed": true,
+          "index_role": "primary key (_id_)",
+          "persisted": true,
+          "evidence": [
+            {
+              "source": "models/user.js",
+              "lines": "14",
+              "detail": "mongoose.model('User', userSchema)"
+            }
+          ],
+          "confidence": "high"
+        },
+        {
+          "name": "email",
+          "path": "email",
+          "type": "string",
+          "bson_type": "string",
+          "required": true,
+          "required_by": ["mongoose"],
+          "nullable": false,
+          "default": null,
+          "default_kind": "none",
+          "enum": null,
+          "validation": {
+            "mongoose": {
+              "type": "String",
+              "required": true
+            },
+            "application": "HTML input type=email on signup; no server-side email format or uniqueness validation"
+          },
+          "references": null,
+          "indexed": false,
+          "persisted": true,
+          "evidence": [
+            {
+              "source": "models/user.js",
+              "lines": "5-10",
+              "detail": "email: { type: String, required: true }"
+            },
+            {
+              "source": "controllers/user.js",
+              "lines": "7-11",
+              "detail": "email is passed to new User({ email, username })"
+            }
+          ],
+          "confidence": "high",
+          "notes": "Not unique, not indexed, not used for login. Duplicate emails are possible. No email verification or password reset flow exists."
+        },
+        {
+          "name": "username",
+          "path": "username",
+          "type": "string",
+          "bson_type": "string",
+          "required": false,
+          "required_by": ["passport-local-mongoose register path"],
+          "nullable": true,
+          "default": null,
+          "default_kind": "none",
+          "enum": null,
+          "validation": {
+            "mongoose": {
+              "type": "String",
+              "unique": true
+            },
+            "application": "No length, character, or format validation; Passport LocalStrategy uses username as the login identifier"
+          },
+          "references": null,
+          "indexed": true,
+          "index_role": "unique lookup field",
+          "persisted": true,
+          "evidence": [
+            {
+              "source": "node_modules/passport-local-mongoose/dist/index.js",
+              "lines": "96-100",
+              "detail": "schemaFields[usernameField] = { type: String, unique: usernameUnique }"
+            },
+            {
+              "source": "node_modules/passport-local-mongoose/dist/index.js",
+              "lines": "55-62",
+              "detail": "defaults: usernameField 'username', usernameUnique true, hashField 'hash', saltField 'salt'"
+            },
+            {
+              "source": "views/users/signup.ejs",
+              "lines": "12-16",
+              "detail": "username input is required only in HTML"
+            }
+          ],
+          "confidence": "high",
+          "notes": "Unique index is case-sensitive because usernameLowerCase and usernameCaseInsensitive default to false. A missing username is possible at the Mongoose layer but the registration path rejects it."
+        },
+        {
+          "name": "hash",
+          "path": "hash",
+          "type": "string",
+          "bson_type": "string",
+          "required": false,
+          "required_by": ["passport-local-mongoose register path"],
+          "nullable": true,
+          "default": null,
+          "default_kind": "none",
+          "enum": null,
+          "validation": {
+            "mongoose": {
+              "type": "String",
+              "select": false
+            },
+            "passport-local-mongoose": "PBKDF2-SHA256, 25,000 iterations, 512-byte key length, hex encoding by default"
+          },
+          "references": null,
+          "indexed": false,
+          "persisted": true,
+          "evidence": [
+            {
+              "source": "node_modules/passport-local-mongoose/dist/index.js",
+              "lines": "49-55, 99",
+              "detail": "hashField is String with select: false; default PBKDF2 parameters"
+            }
+          ],
+          "confidence": "high",
+          "notes": "Sensitive credential material. Never export, log, or synthesize this field. Excluded from queries unless explicitly selected."
+        },
+        {
+          "name": "salt",
+          "path": "salt",
+          "type": "string",
+          "bson_type": "string",
+          "required": false,
+          "required_by": ["passport-local-mongoose register path"],
+          "nullable": true,
+          "default": null,
+          "default_kind": "none",
+          "enum": null,
+          "validation": {
+            "mongoose": {
+              "type": "String",
+              "select": false
+            }
+          },
+          "references": null,
+          "indexed": false,
+          "persisted": true,
+          "evidence": [
+            {
+              "source": "node_modules/passport-local-mongoose/dist/index.js",
+              "lines": "99-100",
+              "detail": "saltField is String with select: false"
+            }
+          ],
+          "confidence": "high",
+          "notes": "Sensitive credential material. Never export, log, or synthesize this field."
+        },
+        {
+          "name": "__v",
+          "path": "__v",
+          "type": "number",
+          "bson_type": "number",
+          "required": false,
+          "required_by": [],
+          "nullable": true,
+          "default": 0,
+          "default_kind": "declared_by_mongoose_default",
+          "enum": null,
+          "validation": {
+            "mongoose": "Version key enabled by default"
+          },
+          "references": null,
+          "indexed": false,
+          "persisted": true,
+          "evidence": [
+            {
+              "source": "models/user.js",
+              "lines": "5-12",
+              "detail": "No versionKey: false option"
+            }
+          ],
+          "confidence": "high"
+        }
+      ],
+      "virtual_fields": [],
+      "indexes": [
+        {
+          "name": "_id_",
+          "keys": {"_id": 1},
+          "unique": true,
+          "ttl": false,
+          "source": "MongoDB primary key",
+          "confidence": "high"
+        },
+        {
+          "name": "username unique index (generated name not declared in application source)",
+          "keys": {"username": 1},
+          "unique": true,
+          "ttl": false,
+          "source": "passport-local-mongoose usernameUnique default",
+          "confidence": "high",
+          "notes": "Mongoose will normally create a username_1 index when autoIndex is enabled. Production index presence and name are unknown."
+        }
+      ],
+      "relationships": [
+        {
+          "field": "_id",
+          "target_collection": "listings",
+          "target_field": "owner",
+          "cardinality": "one-to-many",
+          "required": false,
+          "enforced_by": "application only",
+          "on_delete": "No cascade; deleting a User is not implemented and would leave listing.owner references dangling",
+          "source": "models/listing.js",
+          "lines": "42-45",
+          "confidence": "high"
+        },
+        {
+          "field": "_id",
+          "target_collection": "reviews",
+          "target_field": "author",
+          "cardinality": "one-to-many",
+          "required": false,
+          "enforced_by": "application only",
+          "on_delete": "No cascade; deleting a User is not implemented and would leave review.author references dangling",
+          "source": "models/review.js",
+          "lines": "15-18",
+          "confidence": "high"
+        },
+        {
+          "field": "username",
+          "target_collection": "sessions",
+          "target_field": "session.passport.user",
+          "cardinality": "one-to-many (active sessions)",
+          "required": false,
+          "enforced_by": "Passport + connect-mongo serialization only",
+          "on_delete": "No cascade; sessions remain until TTL or logout",
+          "source": "app.js",
+          "lines": "83-85",
+          "confidence": "medium",
+          "notes": "Passport serializes the username (not the _id) into the session. It is stored inside the encrypted session payload, not as a top-level indexed field. Exact payload shape is library-defined."
+        }
+      ],
+      "cascades": [],
+      "constraints": [
+        {
+          "type": "required",
+          "fields": ["email"],
+          "source": "models/user.js",
+          "confidence": "high"
+        },
+        {
+          "type": "unique",
+          "fields": ["username"],
+          "source": "passport-local-mongoose default",
+          "confidence": "high"
+        },
+        {
+          "type": "password-hash",
+          "fields": ["hash", "salt"],
+          "source": "passport-local-mongoose default",
+          "confidence": "high"
+        }
+      ],
+      "data_dependencies": [
+        "Listing.owner and Review.author populate into user documents; views dereference username.",
+        "Session passport.user stores the username and resolves to users.username.",
+        "No user deletion, profile editing, password reset, or email verification path exists."
+      ],
+      "notes": [
+        "Identity is username-based, not email-based.",
+        "There is no admin role or role field.",
+        "The seeder creates 10 synthetic users with @example.com addresses and a shared sample password. Sample credentials must not be reused in any deployed environment.",
+        "The plugin's password validator default accepts any password; no password policy is configured."
+      ]
+    },
+    {
+      "name": "sessions",
+      "mongodb_collection": "sessions",
+      "model": null,
+      "source_files": [
+        "app.js",
+        "node_modules/connect-mongo/dist/index.cjs"
+      ],
+      "structure_source": "library_defined",
+      "confidence": "high",
+      "purpose": "Express session store managed by connect-mongo. Holds the encrypted express-session payload, including the serialized Passport username and flash/redirect state.",
+      "timestamps": {
+        "createdAt": {
+          "present": false,
+          "reason": "connect-mongo timestamps option defaults to false; app.js does not enable it.",
+          "confidence": "high"
+        },
+        "updatedAt": {
+          "present": false,
+          "reason": "connect-mongo timestamps option defaults to false; app.js does not enable it.",
+          "confidence": "high"
+        },
+        "expires": {
+          "present": true,
+          "field": "expires",
+          "managed_by": "connect-mongo",
+          "confidence": "high"
+        },
+        "lastModified": {
+          "present": true,
+          "field": "lastModified",
+          "managed_by": "connect-mongo",
+          "confidence": "high",
+          "notes": "Present because app.js sets touchAfter to 24 hours."
+        }
+      },
+      "fields": [
+        {
+          "name": "_id",
+          "path": "_id",
+          "type": "string",
+          "bson_type": "string",
+          "required": true,
+          "required_by": ["connect-mongo"],
+          "nullable": false,
+          "default": "session ID (SID), normally the signed express-session ID value",
+          "default_kind": "auto",
+          "enum": null,
+          "validation": {
+            "connect-mongo": "computeStorageId(sid)"
+          },
+          "references": null,
+          "indexed": true,
+          "index_role": "primary key (_id_)",
+          "persisted": true,
+          "evidence": [
+            {
+              "source": "node_modules/connect-mongo/dist/index.cjs",
+              "lines": "332-345",
+              "detail": "set() writes { _id: computeStorageId(sid), session, expires }"
+            }
+          ],
+          "confidence": "high",
+          "notes": "Sensitive session identifier. Do not synthesize or expose."
+        },
+        {
+          "name": "session",
+          "path": "session",
+          "type": "string",
+          "bson_type": "string",
+          "required": true,
+          "required_by": ["connect-mongo"],
+          "nullable": false,
+          "default": null,
+          "default_kind": "none",
+          "enum": null,
+          "validation": {
+            "connect-mongo": "serialize(session) with stringify=true, then encrypt with the crypto adapter (AES-256-GCM via kruptein) using SECRET"
+          },
+          "references": null,
+          "indexed": false,
+          "persisted": true,
+          "evidence": [
+            {
+              "source": "node_modules/connect-mongo/dist/index.cjs",
+              "lines": "187-197, 332-345",
+              "detail": "collectionName defaults to 'sessions'; stringify defaults to true"
+            },
+            {
+              "source": "app.js",
+              "lines": "23-30",
+              "detail": "MongoStore.create with mongoUrl, crypto secret, touchAfter"
+            }
+          ],
+          "confidence": "high",
+          "notes": "Ciphertext string produced by connect-mongo's crypto adapter. app.js sets crypto.secret, so the serialized session is encrypted with AES-256-GCM before storage. Treat as highly sensitive. The exact plaintext payload depends on Passport, connect-flash, and application middleware."
+        },
+        {
+          "name": "expires",
+          "path": "expires",
+          "type": "date",
+          "bson_type": "date",
+          "required": true,
+          "required_by": ["connect-mongo"],
+          "nullable": false,
+          "default": "cookie.expires if present; otherwise now + ttl (default 1,209,600 seconds / 14 days)",
+          "default_kind": "computed",
+          "enum": null,
+          "validation": {
+            "connect-mongo": "TTL index { expires: 1 } with expireAfterSeconds: 0"
+          },
+          "references": null,
+          "indexed": true,
+          "index_role": "TTL index",
+          "persisted": true,
+          "evidence": [
+            {
+              "source": "node_modules/connect-mongo/dist/index.cjs",
+              "lines": "174-187, 230-238",
+              "detail": "computeExpires and native TTL index"
+            },
+            {
+              "source": "app.js",
+              "lines": "36-47",
+              "detail": "cookie expires/maxAge is seven days, so stored expires is normally the cookie expiry"
+            }
+          ],
+          "confidence": "high",
+          "notes": "Application cookie lifetime is 7 days; library fallback TTL is 14 days. MongoDB TTL reaper runs approximately every 60 seconds."
+        },
+        {
+          "name": "lastModified",
+          "path": "lastModified",
+          "type": "date",
+          "bson_type": "date",
+          "required": false,
+          "required_by": [],
+          "nullable": true,
+          "default": null,
+          "default_kind": "none",
+          "enum": null,
+          "validation": {
+            "connect-mongo": "written when touchAfter > 0"
+          },
+          "references": null,
+          "indexed": false,
+          "persisted": true,
+          "evidence": [
+            {
+              "source": "node_modules/connect-mongo/dist/index.cjs",
+              "lines": "342-345, 366-385",
+              "detail": "lastModified is set on set/touch when touchAfter is positive"
+            },
+            {
+              "source": "app.js",
+              "lines": "23-30",
+              "detail": "touchAfter: 24 * 3600"
+            }
+          ],
+          "confidence": "high"
+        }
+      ],
+      "inferred_nested_payload": {
+        "format": "JSON serialized session state before encryption; the stored session field is AES-256-GCM ciphertext",
+        "confidence": "medium",
+        "keys": [
+          {
+            "name": "cookie",
+            "type": "object",
+            "required": true,
+            "fields": [
+              {"name": "originalMaxAge", "type": "number", "required": false},
+              {"name": "expires", "type": "date (ISO string in JSON)", "required": false},
+              {"name": "httpOnly", "type": "boolean", "required": false},
+              {"name": "secure", "type": "boolean", "required": false},
+              {"name": "path", "type": "string", "required": false},
+              {"name": "sameSite", "type": "string", "required": false, "notes": "Not set by app.js; express-session default applies."}
+            ]
+          },
+          {
+            "name": "passport",
+            "type": "object",
+            "required": false,
+            "fields": [
+              {"name": "user", "type": "string", "required": false, "notes": "Serialized username (passport-local-mongoose serializeUser); resolves via users.username, not users._id."}
+            ]
+          },
+          {
+            "name": "flash",
+            "type": "object",
+            "required": false,
+            "fields": [
+              {"name": "success", "type": "array<string>", "required": false},
+              {"name": "error", "type": "array<string>", "required": false}
+            ]
+          },
+          {
+            "name": "saveRedirectUrl",
+            "type": "string",
+            "required": false,
+            "notes": "Set by isLoggedIn on protected route access; not cleared after use."
+          }
+        ],
+        "unknown_keys": "Additional keys may exist from express-session, Passport, or future middleware. Exact deployed payloads are not known."
+      },
+      "indexes": [
+        {
+          "name": "_id_",
+          "keys": {"_id": 1},
+          "unique": true,
+          "ttl": false,
+          "source": "MongoDB primary key",
+          "confidence": "high"
+        },
+        {
+          "name": "expires_1",
+          "keys": {"expires": 1},
+          "unique": false,
+          "ttl": true,
+          "expireAfterSeconds": 0,
+          "source": "connect-mongo native autoRemove default",
+          "confidence": "high",
+          "notes": "Index name is generated by MongoDB; production presence is expected but not directly verified."
+        }
+      ],
+      "relationships": [
+        {
+          "field": "session.passport.user",
+          "target_collection": "users",
+          "target_field": "username",
+          "cardinality": "many sessions to one user",
+          "required": false,
+          "enforced_by": "Passport serialization only",
+          "on_delete": "No cascade; TTL removes expired sessions",
+          "source": "app.js",
+          "lines": "83-85",
+          "confidence": "medium"
+        }
+      ],
+      "cascades": [],
+      "constraints": [
+        {
+          "type": "unique",
+          "fields": ["_id"],
+          "source": "MongoDB primary key",
+          "confidence": "high"
+        },
+        {
+          "type": "ttl",
+          "fields": ["expires"],
+          "source": "connect-mongo",
+          "confidence": "high"
+        }
+      ],
+      "data_dependencies": [
+        "Every authenticated request depends on the session document and its serialized Passport username.",
+        "Flash success/error messages depend on connect-flash data inside the session.",
+        "Protected-route redirect behavior depends on session.saveRedirectUrl."
+      ],
+      "notes": [
+        "This collection is not a business model and should not be exposed through the public API.",
+        "Session documents are encrypted by connect-mongo's crypto adapter using SECRET (AES-256-GCM via kruptein) at the session-field level. This is not full-database encryption and does not replace MongoDB storage encryption.",
+        "A FastAPI migration cannot assume it can reuse Express session cookies without deliberately reproducing cookie signing and session serialization."
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "name": "listing_owner",
+      "from_collection": "listings",
+      "from_field": "owner",
+      "to_collection": "users",
+      "to_field": "_id",
+      "cardinality": "many-to-one",
+      "required": false,
+      "enforced_by": "application only (Mongoose ref/populate)",
+      "on_delete": "none implemented",
+      "evidence": ["models/listing.js:42-45", "controllers/listing.js:67-70"],
+      "confidence": "high"
+    },
+    {
+      "name": "listing_reviews",
+      "from_collection": "listings",
+      "from_field": "review[]",
+      "to_collection": "reviews",
+      "to_field": "_id",
+      "cardinality": "one-to-many",
+      "required": false,
+      "enforced_by": "application only (Mongoose ref/populate)",
+      "on_delete": "listing findOneAndDelete hook deletes referenced reviews",
+      "evidence": ["models/listing.js:36-41,58-62", "controllers/review.js:4-12"],
+      "confidence": "high"
+    },
+    {
+      "name": "review_author",
+      "from_collection": "reviews",
+      "from_field": "author",
+      "to_collection": "users",
+      "to_field": "_id",
+      "cardinality": "many-to-one",
+      "required": false,
+      "enforced_by": "application only (Mongoose ref/populate)",
+      "on_delete": "none implemented",
+      "evidence": ["models/review.js:15-18", "controllers/review.js:4-10"],
+      "confidence": "high"
+    },
+    {
+      "name": "session_user",
+      "from_collection": "sessions",
+      "from_field": "session.passport.user",
+      "to_collection": "users",
+      "to_field": "username",
+      "cardinality": "many-to-one",
+      "required": false,
+      "enforced_by": "Passport + connect-mongo serialization only",
+      "on_delete": "TTL expiry only; no user-delete cascade",
+      "evidence": ["app.js:83-85", "node_modules/passport-local-mongoose/dist/index.js:170-181", "node_modules/connect-mongo/dist/index.cjs:332-345"],
+      "confidence": "medium",
+      "notes": "Passport serializes the username, not the _id. Stored inside an encrypted session payload, not as an indexed top-level field."
+    }
+  ],
+  "index_summary": [
+    {
+      "collection": "listings",
+      "indexes": ["_id_"],
+      "missing_but_possible_future_indexes": [
+        "2dsphere on geometry (only if server-side geospatial queries are added)",
+        "category",
+        "price",
+        "owner",
+        "text index on title/description/location/country (only if server-side text search replaces regex search)"
+      ],
+      "confidence": "high",
+      "notes": "No secondary indexes are declared. Adding indexes is a data/performance decision, not required to retain behavior."
+    },
+    {
+      "collection": "reviews",
+      "indexes": ["_id_"],
+      "missing_but_possible_future_indexes": [
+        "author",
+        "createdAt"
+      ],
+      "confidence": "high"
+    },
+    {
+      "collection": "users",
+      "indexes": ["_id_", "unique username"],
+      "missing_but_possible_future_indexes": [
+        "unique email (requires data cleanup; duplicate emails may already exist)"
+      ],
+      "confidence": "high"
+    },
+    {
+      "collection": "sessions",
+      "indexes": ["_id_", "TTL expires"],
+      "missing_but_possible_future_indexes": [],
+      "confidence": "high"
+    }
+  ],
+  "non_persisted_state": [
+    {
+      "name": "ai_chat_conversation",
+      "not_a_mongodb_collection": true,
+      "storage": "browser sessionStorage",
+      "keys": [
+        "chatConversation",
+        "chatWelcomeShown",
+        "chatOpen"
+      ],
+      "shape": {
+        "chatConversation": "JSON array of { role: 'user'|'assistant', content: string }",
+        "chatWelcomeShown": "string 'true' or absent",
+        "chatOpen": "string 'true' or 'false'"
+      },
+      "source": "public/js/script.js",
+      "lines": "109-147, 149-205",
+      "confidence": "high",
+      "notes": "Per-tab, lost when the tab closes. No server-side conversation history or message IDs. No tool-call parts are stored; only final assistant text is retained."
+    },
+    {
+      "name": "ai_description_request",
+      "not_a_mongodb_collection": true,
+      "storage": "request body only",
+      "shape": {
+        "title": "string (optional from client perspective)",
+        "location": "string (optional from client perspective)",
+        "category": "string (optional from client perspective)"
+      },
+      "source": "public/js/script.js",
+      "lines": "85-97",
+      "confidence": "high",
+      "notes": "Not persisted. No server-side validation before prompt interpolation."
+    },
+    {
+      "name": "ai_search_request",
+      "not_a_mongodb_collection": true,
+      "storage": "request body only",
+      "shape": {
+        "query": "string, required by controller"
+      },
+      "source": "public/js/script.js",
+      "lines": "221-245",
+      "confidence": "high",
+      "notes": "Not persisted. Result is rendered EJS HTML, not a stored document."
+    }
+  ],
+  "environment_variables": [
+    {
+      "name": "ATLAS_DB_URL",
+      "purpose": "MongoDB connection string used by the Express app and connect-mongo session store.",
+      "used_by": ["app.js:5,23-30,50"],
+      "secret": true,
+      "required_at_runtime": true,
+      "documented_in_example": true,
+      "notes": "Primary application database variable. Do not commit values."
+    },
+    {
+      "name": "ATLAS_DB",
+      "purpose": "MongoDB connection string used only by the seed script.",
+      "used_by": ["init/index.js:22,45"],
+      "secret": true,
+      "required_at_runtime": false,
+      "documented_in_example": false,
+      "notes": "Inconsistent with ATLAS_DB_URL. Seeding fails if only ATLAS_DB_URL is set."
+    },
+    {
+      "name": "MONGO_URL",
+      "purpose": "Documented local MongoDB connection string.",
+      "used_by": [],
+      "secret": true,
+      "required_at_runtime": false,
+      "documented_in_example": true,
+      "notes": "Documented in README/env.example but not read by any application source file."
+    },
+    {
+      "name": "SECRET",
+      "purpose": "express-session signing secret and connect-mongo session-payload encryption secret.",
+      "used_by": ["app.js:26,38"],
+      "secret": true,
+      "required_at_runtime": true,
+      "documented_in_example": true,
+      "notes": "Changing this invalidates existing session cookies."
+    },
+    {
+      "name": "NODE_ENV",
+      "purpose": "Controls secure session cookie and dotenv loading behavior.",
+      "used_by": ["app.js:45", "routes/listing.js:1"],
+      "secret": false,
+      "required_at_runtime": false,
+      "documented_in_example": false,
+      "notes": "When 'production', cookie.secure is true. No trust proxy setting exists."
+    },
+    {
+      "name": "CLOUD_NAME",
+      "purpose": "Cloudinary cloud name.",
+      "used_by": ["cloudConfig.js:5"],
+      "secret": true,
+      "required_at_runtime": true,
+      "documented_in_example": true,
+      "notes": "Required for image upload."
+    },
+    {
+      "name": "CLOUD_API_KEY",
+      "purpose": "Cloudinary API key.",
+      "used_by": ["cloudConfig.js:6"],
+      "secret": true,
+      "required_at_runtime": true,
+      "documented_in_example": true
+    },
+    {
+      "name": "CLOUD_API_SECRET",
+      "purpose": "Cloudinary API secret.",
+      "used_by": ["cloudConfig.js:7"],
+      "secret": true,
+      "required_at_runtime": true,
+      "documented_in_example": true
+    },
+    {
+      "name": "MAPTILER_API_KEY",
+      "purpose": "MapTiler forward geocoding on create/update and MapLibre style URL token on the show page.",
+      "used_by": ["controllers/listing.js:3,34,56,67", "views/listings/show.ejs:4", "public/js/map.js:3"],
+      "secret": true,
+      "required_at_runtime": true,
+      "documented_in_example": true,
+      "notes": "The key is intentionally exposed to the browser for MapLibre. Use a restricted public key in production, not a server secret with broad scope."
+    },
+    {
+      "name": "GEMINI_API_KEY",
+      "purpose": "Gemini API key read by the @google/genai client used for the description generator.",
+      "used_by": ["controllers/ai.js:1-2,37-41"],
+      "secret": true,
+      "required_at_runtime": true,
+      "documented_in_example": true,
+      "notes": "@google/genai's node client resolves GOOGLE_API_KEY first, then GEMINI_API_KEY. Do not expose to the browser."
+    },
+    {
+      "name": "GOOGLE_GENERATIVE_AI_API_KEY",
+      "purpose": "Gemini API key read by the @ai-sdk/google provider used by chat and natural-language search.",
+      "used_by": ["controllers/ai.js:3,90-104,126-132"],
+      "secret": true,
+      "required_at_runtime": true,
+      "documented_in_example": true,
+      "notes": "Verified in @ai-sdk/google provider source. If only GEMINI_API_KEY is set, chat and search fail; if only this variable is set, description generation fails."
+    },
+    {
+      "name": "GOOGLE_API_KEY",
+      "purpose": "Fallback Gemini API key read by @google/genai before GEMINI_API_KEY.",
+      "used_by": ["@google/genai node client (library behavior)"],
+      "secret": true,
+      "required_at_runtime": false,
+      "documented_in_example": false,
+      "notes": "Not referenced by application source. Presence in the deployed environment is unknown. If both GOOGLE_API_KEY and GEMINI_API_KEY are set, the library warns and uses GOOGLE_API_KEY."
+    },
+    {
+      "name": "PORT",
+      "purpose": "Documented HTTP port.",
+      "used_by": [],
+      "secret": false,
+      "required_at_runtime": false,
+      "documented_in_example": true,
+      "notes": "Documented but ignored; app.js hard-codes port 8080."
+    }
+  ],
+  "unknowns": [
+    {
+      "topic": "Deployed collection names",
+      "detail": "Collection names are inferred from Mongoose default pluralization. A production deployment could override them or contain legacy collections.",
+      "needed_to_resolve": "Read-only production schema inspection or a database dump.",
+      "confidence": "unknown"
+    },
+    {
+      "topic": "Deployed indexes",
+      "detail": "This catalog documents indexes declared by code/library defaults. Manual production indexes, missing auto-index builds, and index names are unknown.",
+      "needed_to_resolve": "db.collection.getIndexes() on a non-production copy.",
+      "confidence": "unknown"
+    },
+    {
+      "topic": "Document counts and data quality",
+      "detail": "Seed data implies 49 listings, 10 users, and 185 reviews, but production counts, duplicate usernames/emails, missing owners, dangling review references, missing images, and malformed geometry are unknown.",
+      "needed_to_resolve": "Anonymized aggregate data-quality queries.",
+      "confidence": "unknown"
+    },
+    {
+      "topic": "Stored numeric types",
+      "detail": "Mongoose Number fields may be stored as BSON int32 or double depending on values and driver serialization. The API contract should treat both as JSON numbers.",
+      "needed_to_resolve": "BSON type sampling.",
+      "confidence": "unknown"
+    },
+    {
+      "topic": "Session payload shape",
+      "detail": "The exact serialized session keys depend on Express, Passport, connect-flash, and middleware versions and runtime state.",
+      "needed_to_resolve": "Inspect a synthetic session in a test environment, never production user sessions.",
+      "confidence": "medium"
+    },
+    {
+      "topic": "AI provider entitlement",
+      "detail": "Whether the project's Google account can access the hard-coded gemini-3.1-flash-lite model and which API surface (Gemini API vs Vertex) is used is not verifiable from source.",
+      "needed_to_resolve": "Provider console/model listing and a controlled non-production request.",
+      "confidence": "unknown"
+    },
+    {
+      "topic": "Cloudinary asset lifecycle",
+      "detail": "Folder permissions, transformations, and whether assets are deleted when listings are deleted are not implemented in source. Existing asset inventory is unknown.",
+      "needed_to_resolve": "Cloudinary console review and a synthetic upload/delete test.",
+      "confidence": "unknown"
+    },
+    {
+      "topic": "Production deployment topology",
+      "detail": "No Dockerfile, CI configuration, reverse proxy, or hosting manifest exists in the repository. TLS termination and trust-proxy behavior are unknown.",
+      "needed_to_resolve": "Deployment platform/configuration review.",
+      "confidence": "unknown"
+    },
+    {
+      "topic": "AI chat server-side history",
+      "detail": "No conversation collection exists. Whether any external logging stores prompts/responses is unknown.",
+      "needed_to_resolve": "Infrastructure/provider logging review.",
+      "confidence": "unknown"
+    }
+  ],
+  "evidence_files": [
+    "app.js",
+    "package.json",
+    "package-lock.json",
+    "env.example",
+    "schema.js",
+    "middleware.js",
+    "cloudConfig.js",
+    "models/listing.js",
+    "models/review.js",
+    "models/user.js",
+    "routes/listing.js",
+    "routes/review.js",
+    "routes/user.js",
+    "routes/ai.js",
+    "controllers/listing.js",
+    "controllers/review.js",
+    "controllers/user.js",
+    "controllers/ai.js",
+    "views/layouts/boilerplate.ejs",
+    "views/listings/index.ejs",
+    "views/listings/show.ejs",
+    "views/listings/new.ejs",
+    "views/listings/edit.ejs",
+    "views/includes/listing.ejs",
+    "views/includes/navbar.ejs",
+    "views/includes/flash.ejs",
+    "views/includes/footer.ejs",
+    "views/users/login.ejs",
+    "views/users/signup.ejs",
+    "views/error.ejs",
+    "public/js/script.js",
+    "public/js/map.js",
+    "public/css/style.css",
+    "init/data.js",
+    "init/index.js",
+    "node_modules/passport-local-mongoose/dist/index.js",
+    "node_modules/connect-mongo/dist/index.cjs",
+    "node_modules/ai/dist/index.d.ts",
+    "node_modules/@ai-sdk/google/dist/index.js",
+    "node_modules/@google/genai/dist/node/index.cjs"
+  ]
+}

@@ -46,20 +46,25 @@ const sessionOptions = {
     },
 };
 
-async function main() {
-    await mongoose.connect(DB_URL)
+async function connectToDatabase() {
+    await mongoose.connect(DB_URL);
 }
 
+function start() {
+    return connectToDatabase().then(() => {
+        console.log("connected to db");
+        return app.listen(8080, () => {
+            console.log("server is listening on port 8080");
+        });
+    })
+        .catch((err) => {
+            console.log(err)
+        });
+}
 
-main().then(() => {
-    console.log("connected to db");
-    app.listen(8080, () => {
-        console.log("server is listening on port 8080");
-    });
-})
-    .catch((err) => {
-        console.log(err)
-    });
+if (require.main === module) {
+    start();
+}
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -112,4 +117,11 @@ app.use((err, req, res, next) => {
     }
     res.status(statusCode).render("error.ejs", { message });
 });
+
+module.exports = {
+    app,
+    connectToDatabase,
+    start,
+    sessionStore: store,
+};
 
