@@ -18,7 +18,7 @@
 // ── 2. NAVBAR TRANSPARENCY + SCROLL ──
 // On the homepage the navbar starts transparent (over the hero).
 // Once the user scrolls past 50px, add .scrolled to switch to solid.
-const navbar = document.querySelector('.homestay-nav');
+const navbar = document.querySelector('.site-nav');
 
 if (navbar && navbar.classList.contains('navbar-transparent')) {
   // Run once on load in case page is already scrolled (e.g. after redirect)

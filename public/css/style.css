@@ -1,5 +1,5 @@
 /* ============================================
-   HOMESTAY — Custom styles
+   EASYINVITES — Custom styles
    Bootstrap handles layout, grid, spacing, forms.
    This file = brand colors + effects Bootstrap can't do.
    ============================================ */
@@ -134,7 +134,7 @@ h6 {
 
 
 /* ── 4. NAVBAR (glass + transparent-on-homepage) ── */
-.homestay-nav {
+.site-nav {
   height: 5rem;
   background: rgba(250, 248, 245, 0.95);
   backdrop-filter: blur(12px);
@@ -142,22 +142,22 @@ h6 {
   --nav-text: var(--earth);
 }
 
-.homestay-nav.navbar-transparent {
+.site-nav.navbar-transparent {
   background: transparent;
   backdrop-filter: none;
   border-bottom: none;
   --nav-text: var(--linen);
 }
 
-.homestay-nav.navbar-transparent.scrolled {
+.site-nav.navbar-transparent.scrolled {
   background: rgba(250, 248, 245, 0.95);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(201, 185, 154, 0.2);
   --nav-text: var(--earth);
 }
 
-.homestay-nav .nav-link,
-.homestay-nav .brand-name {
+.site-nav .nav-link,
+.site-nav .brand-name {
   color: var(--nav-text);
 }
 
@@ -167,11 +167,11 @@ h6 {
   font-weight: 600;
 }
 
-.homestay-nav .nav-link {
+.site-nav .nav-link {
   opacity: 0.8;
 }
 
-.homestay-nav .nav-link:hover {
+.site-nav .nav-link:hover {
   opacity: 1;
 }
 
@@ -192,12 +192,12 @@ h6 {
   color: var(--earth) !important;
 }
 
-.homestay-nav .container-fluid {
+.site-nav .container-fluid {
   position: relative;
 }
 
 @media (min-width: 768px) {
-  .homestay-nav .navbar-nav.mx-auto {
+  .site-nav .navbar-nav.mx-auto {
     position: absolute;
     left: 50%;
     top: 50%;
@@ -213,7 +213,7 @@ h6 {
   margin-left: calc(50% - 50vw);
   height: 100vh;
   margin-top: -5rem;
-  background: var(--earth) url('/images/hero-homestay.jpg') center / cover no-repeat;
+  background: var(--earth) url('/images/hero.jpg') center / cover no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -628,7 +628,7 @@ h6 {
 
 
 /* ── 12. FOOTER (Bootstrap handles grid — we add brand colors) ── */
-.homestay-footer {
+.site-footer {
   background: var(--linen);
   border-top: 1px solid rgba(201, 185, 154, 0.25);
   padding: 5rem 0;

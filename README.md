@@ -1,6 +1,6 @@
-# Homestay 🏡
+# EasyInvites 🏡
 
-Homestay is a full-stack accommodation booking platform inspired by Airbnb. It lets users list, discover and review unique homes to stay in. The project demonstrates auth, CRUD, file uploads, geolocation, and practical AI integrations: an AI listing description generator, a conversational chatbot, and natural-language search (powered by Google Gemini via the Vercel AI SDK).
+EasyInvites is a full-stack accommodation booking platform inspired by Airbnb. It lets users list, discover and review unique homes to stay in. The project demonstrates auth, CRUD, file uploads, geolocation, and practical AI integrations: an AI listing description generator, a conversational chatbot, and natural-language search (powered by Google Gemini via the Vercel AI SDK).
 
 ## ✨ Features
 
@@ -46,8 +46,8 @@ Homestay is a full-stack accommodation booking platform inspired by Airbnb. It l
 ### Install
 
 ```bash
-git clone https://github.com/<your-username>/homestay.git
-cd "Airbnb"
+git clone https://github.com/<your-username>/easyinvites.git
+cd easyinvites
 npm install
 ```
 
@@ -76,7 +76,7 @@ Visit http://localhost:8080
 Create a `.env` file at the project root and set the following values (example):
 
 ```env
-# Local DB (or use ATLAS/hosted URI)
+# Local DB (legacy database name; rename only with a data migration)
 MONGO_URL=mongodb://127.0.0.1:27017/homestay
 # or ATLAS_DB_URL=your-atlas-connection-string
 
@@ -114,7 +114,7 @@ The seeder clears Reviews → Listings → Users then inserts sample data.
 ## Project Structure
 
 ```
-homestay/
+easyinvites/
 ├── init/              # Database seeding scripts and sample data
 ├── models/            # Mongoose schemas (Listing, Review, User)
 ├── routes/            # Express route handlers
