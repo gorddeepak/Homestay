@@ -582,13 +582,13 @@ Migration consequences:
 - Two runtimes mean two dependency ecosystems, two lockfiles, two security-update streams, and two deploy pipelines. **Inference.**
 - The current hard-coded port and ignored `PORT` must not be carried forward. **Verified.**
 - The readiness check must distinguish "app process alive" from "Mongo reachable"; the current health route does not, because listen is gated on DB connection. **Verified.**
-- EazyInvites rebranding (name, domain, logo, copy, metadata) should be a separate change set after functional parity, not mixed with migration commits. **Recommendation.**
+- eazyinvites rebranding (name, domain, logo, copy, metadata) should be a separate change set after functional parity, not mixed with migration commits. **Recommendation.**
 
 ---
 
 ## 6. Recommended migration phases
 
-The sequence is a strangler migration with MongoDB retained. Each phase must be independently deployable and reversible. Do not combine the EazyInvites rebrand with functional migration.
+The sequence is a strangler migration with MongoDB retained. Each phase must be independently deployable and reversible. Do not combine the eazyinvites rebrand with functional migration.
 
 | Phase | Scope | Major dependencies | Practical acceptance criterion |
 |---|---|---|---|
@@ -600,7 +600,7 @@ The sequence is a strangler migration with MongoDB retained. Each phase must be 
 | **5a. Non-streaming AI** | Port description generation and NL search to FastAPI/Pydantic AI or direct provider; return JSON for search; centralize model config. | Pydantic AI + Google provider, Gemini key, prompt fixtures, Pydantic response models | Description returns the expected JSON shape and 2–3 sentence style on golden prompts; NL search extracts min/max/category/location/country; metacharacters are escaped; no HTML returned; provider errors are safe and observable. |
 | **5b. Streaming chat** | Implement UI-message-stream chat with Pydantic AI `VercelAIAdapter` or a verified adapter; port both tools; build React chat with AI Elements; keep a legacy text endpoint only if rollback requires it. | `ai` + `@ai-sdk/react` matching majors, AI Elements vendored, Streamdown, adapter version, tool contract tests, AbortController | Chat streams incrementally; tool calls/results appear as structured parts or are deliberately hidden; Markdown renders safely; no duplicate sends under StrictMode; abort/stop works; step limit and error states tested; token/usage logged. |
 | **6. Cutover and hardening** | Move all traffic to React/FastAPI; keep Mongo; add observability, rate limits, CSRF, security headers, backups, runbooks; decommission EJS/Express. | CI/CD, monitoring, secrets management, load test, backup/restore | All routes pass contract/parity tests; auth and AI smoke tests pass in staging; p95 latency and error budget accepted; rollback to Express verified during a defined window; no secrets in client bundle or logs; backups restore tested. |
-| **7. EazyInvites rebrand (separate)** | Name, domain, logo, palette, copy, metadata, email/social handles. | Brand assets, DNS/domain, legal/privacy review | Rebrand is functionally invisible: same routes/data/behavior; SEO/metadata updated deliberately; rollback independent of migration. |
+| **7. eazyinvites rebrand (separate)** | Name, domain, logo, palette, copy, metadata, email/social handles. | Brand assets, DNS/domain, legal/privacy review | Rebrand is functionally invisible: same routes/data/behavior; SEO/metadata updated deliberately; rollback independent of migration. |
 
 **Phase 0 outcome (2026-10-26):** Implemented on `migration/phase-0-baseline` and uncommitted. `npm test` runs 54 tests (44 pass, 10 deferred, 0 fail) against a disposable local database with Gemini, Cloudinary, and MapTiler doubled; the normal app still starts on port 8080. See `docs/PHASE_0_BASELINE_REPORT.md` for coverage, defects, and limitations. Phase 0 is complete for the Express baseline; CI and the deferred secure contracts remain open.
 
@@ -1160,7 +1160,7 @@ Versions marked **TBD** must be selected and verified during Phase 0/1; do not c
 6. **Strict data residency/compliance.** If Gemini/Cloudinary/MapTiler cannot be used in the target region, provider choices must change before the AI migration.
 7. **Offline/real-time requirements.** If live availability or messaging is required, add WebSockets/event infrastructure rather than forcing it into REST/chat streams.
 
-### 11.4 EazyInvites rebranding
+### 11.4 eazyinvites rebranding
 
 Keep the rebrand as a separate phase/project:
 

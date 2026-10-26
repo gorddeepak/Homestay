@@ -1,6 +1,6 @@
-# EazyInvites 🏡
+# eazyinvites 🏡
 
-EazyInvites is a full-stack accommodation booking platform inspired by Airbnb. It lets users list, discover and review unique homes to stay in. The project demonstrates auth, CRUD, file uploads, geolocation, and practical AI integrations: an AI listing description generator, a conversational chatbot, and natural-language search (powered by Google Gemini via the Vercel AI SDK).
+eazyinvites is a full-stack accommodation booking platform inspired by Airbnb. It lets users list, discover and review unique homes to stay in. The project demonstrates auth, CRUD, file uploads, geolocation, and practical AI integrations: an AI listing description generator, a conversational chatbot, and natural-language search (powered by Google Gemini via the Vercel AI SDK).
 
 ## ✨ Features
 
@@ -120,7 +120,8 @@ eazyinvites/
 ├── routes/            # Express route handlers
 ├── controllers/       # Route logic, including AI controller
 ├── views/             # EJS templates
-├── public/            # CSS, client JS (chat widget, maps)
+├── public/            # CSS, client JS (chat widget, maps), favicons, PWA icons
+├── eazyinvites-brand-kit/ # Source logo, app icon, and favicon assets
 ├── utils/             # Helpers (wrapAsync, ExpressError, etc.)
 ├── cloudConfig.js     # Cloudinary + multer storage config
 ├── app.js             # App entry point

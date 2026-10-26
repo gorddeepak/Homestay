@@ -1,4 +1,4 @@
-# EazyInvites Rebrand
+# eazyinvites Rebrand
 
 **Branch:** `rebrand/eazyinvites`
 **Base:** `migration/phase-0-baseline` (phase 0 committed separately, per the migration audit)
@@ -12,13 +12,13 @@ The rebrand is presentation-only. Routes, data models, auth, AI behavior, and th
 
 | Area | Change |
 |---|---|
-| Brand name | `Homestay` → `EazyInvites` in navbar, footer, auth pages, chat header, page title |
+| Brand name | `Homestay` → `eazyinvites` in navbar, footer, auth pages, chat header, page title |
 | Metadata | Page title, description, Open Graph title/description/type, Apple web-app title, PWA manifest name/short name |
-| AI copy | Chat system prompt and listing-search tool description now name EazyInvites |
+| AI copy | Chat system prompt and listing-search tool description now name eazyinvites |
 | Internal identifiers | `.homestay-nav` → `.site-nav`, `.homestay-footer` → `.site-footer`, `hero-homestay.jpg` → `hero.jpg` |
 | Package | `package.json` / `package-lock.json` name → `eazyinvites` |
 | Docs | README title, description, clone path, and project tree updated |
-| Logo | Brand kit from `eazyinvites_negative_space_homes/`; navbar/footer lockups inlined via `views/includes/logo.ejs` |
+| Logo | Brand kit from `eazyinvites-brand-kit/`; navbar/footer lockups inlined via `views/includes/logo.ejs` |
 | Icons | New favicon set, Apple touch icon, and PWA manifest icons; old 96×96 icon removed |
 | Palette | Brand linen/clay/sand/earth/ink confirmed; manifest colors updated to `#FAF8F5` |
 
@@ -31,13 +31,15 @@ The rebrand is presentation-only. Routes, data models, auth, AI behavior, and th
 
 ## Logo usage notes
 
-The generated SVG lockups contain live `<text>` referencing Space Grotesk and DM Sans. The PNG lockup exports render with a serif fallback, so they are not used on the site. `views/includes/logo.ejs` inlines the SVG geometry so the page's loaded webfonts apply and the colors can follow the site tokens. Icons are path-only and use the supplied PNG/SVG/ICO files directly.
+The generated SVG lockups contain live `<text>` referencing Space Grotesk and DM Sans. `views/includes/logo.ejs` inlines the SVG geometry so the lockups stay crisp at any size and the colors follow the site tokens. Icons are path-only and use the supplied PNG/SVG/ICO files directly.
+
+The wordmark is lowercase `eazyinvites` in every lockup, per the brand kit. The navbar uses the compact lockup without the tagline; the footer uses the primary lockup with the tagline.
 
 Navbar styling is constant at every scroll position: the bar uses the solid linen glass background with ink/earth logo and nav text from first paint, rather than starting transparent/white over the home hero.
 
 ## Still to do (needs brand/ops inputs)
 
-- [ ] Final spelling/casing decision (`EazyInvites` is used here)
+- [x] Spelling/casing decided: lowercase `eazyinvites`
 - [ ] Production domain, canonical URLs, and `og:url`
 - [ ] Email sender addresses and social handles
 - [ ] Legal/privacy copy review
@@ -45,5 +47,5 @@ Navbar styling is constant at every scroll position: the bar uses the solid line
 ## Verification
 
 - `npm test` — 44 passing, 10 deferred, 0 failing.
-- Booted the app against a disposable local database: `/` returned 200 with title `EazyInvites`; `/css/style.css` served `.site-nav`; `/images/hero.jpg` returned 200.
+- Booted the app against a disposable local database: `/` returned 200 with title `eazyinvites`; `/css/style.css` served `.site-nav`; `/images/hero.jpg` returned 200.
 - The only remaining `Homestay` strings in rendered home-page HTML are the `Heritage Homestay` category labels.
