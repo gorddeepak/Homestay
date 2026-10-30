@@ -19,7 +19,7 @@ const Listing  = require("../models/listing.js");
 const Review   = require("../models/review.js");
 const User     = require("../models/user.js");
 const { data: sampleListings, reviewPool } = require("./data.js");
-const DB_URL = process.env.ATLAS_DB;
+const DB_URL = process.env.ATLAS_DB_URL || process.env.ATLAS_DB;
 
 
 // ─── Sample users ─────────────────────────────────────────────────────────────

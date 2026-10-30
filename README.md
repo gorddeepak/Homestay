@@ -2,6 +2,10 @@
 
 EazyInvites is a full-stack accommodation booking platform inspired by Airbnb. It lets users list, discover and review unique homes to stay in. The project demonstrates auth, CRUD, file uploads, geolocation, and practical AI integrations: an AI listing description generator, a conversational chatbot, and natural-language search (powered by Google Gemini via the Vercel AI SDK).
 
+> **Running the current React + FastAPI stack?** See
+> [docs/RUNNING.md](docs/RUNNING.md). The root Express/EJS app remains available
+> as the legacy UI, and all three apps share the same MongoDB database.
+
 ## ✨ Features
 
 - Listings: create, edit, delete stays with images, price, category and location
@@ -46,8 +50,8 @@ EazyInvites is a full-stack accommodation booking platform inspired by Airbnb. I
 ### Install
 
 ```bash
-git clone https://github.com/<your-username>/homestay.git
-cd "Airbnb"
+git clone https://github.com/gorddeepak/Homestay.git
+cd Homestay
 npm install
 ```
 
@@ -76,9 +80,8 @@ Visit http://localhost:8080
 Create a `.env` file at the project root and set the following values (example):
 
 ```env
-# Local DB (or use ATLAS/hosted URI)
-MONGO_URL=mongodb://127.0.0.1:27017/homestay
-# or ATLAS_DB_URL=your-atlas-connection-string
+# Local DB (or use an Atlas/hosted URI)
+ATLAS_DB_URL=mongodb://127.0.0.1:27017/homestay
 
 # Session secret
 SECRET=your-session-secret
