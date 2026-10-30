@@ -14,8 +14,8 @@ export default defineConfig({
     port: 5173,
     proxy: {
       "/api": "http://127.0.0.1:8000",
-      // Listing images with local paths are still served by the Express app.
-      "/images": "http://127.0.0.1:8080",
+      // Seeded listing images are served by the FastAPI static mount.
+      "/images": "http://127.0.0.1:8000",
     },
   },
 });

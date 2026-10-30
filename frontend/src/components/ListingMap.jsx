@@ -14,7 +14,7 @@ import { getConfig } from "../api";
 // MapLibre 6 is ESM-only and needs an explicit worker URL when bundled.
 setWorkerUrl(workerUrl);
 
-// The MapTiler key is the same public key the Express show page exposes.
+// The MapTiler key is the public key returned by GET /api/config.
 let configPromise = null;
 
 function loadMapKey() {

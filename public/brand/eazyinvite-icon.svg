@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="120" height="150" viewBox="0 0 120 150" role="img" aria-label="EazyInvite window icon">
-
-  <path d="M20 132 V62 a40 40 0 0 1 80 0 V132 Z" fill="none" stroke="#8B7355" stroke-width="5" stroke-linejoin="round"/>
-  <path d="M60 22 V132 M20 80 H100" fill="none" stroke="#8B7355" stroke-width="3"/>
-  <path d="M64 128 H96 V86 Z" fill="#C9B99A"/>
-
-</svg>

@@ -1,8 +1,10 @@
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from pymongo.errors import PyMongoError
 from slowapi.errors import RateLimitExceeded
 
@@ -106,7 +108,10 @@ def _validation_failed(_request: Request, exc: RequestValidationError):
     return JSONResponse(status_code=422, content={"detail": errors})
 
 
+STATIC_IMAGES_DIR = Path(__file__).resolve().parents[1] / "static" / "images"
+
 app = FastAPI(title="EazyInvites API", version="0.6.0", lifespan=lifespan)
+app.mount("/images", StaticFiles(directory=STATIC_IMAGES_DIR), name="images")
 app.state.limiter = limiter
 app.add_middleware(RequestBodyLimitMiddleware, limits=AI_BODY_LIMITS)
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded)

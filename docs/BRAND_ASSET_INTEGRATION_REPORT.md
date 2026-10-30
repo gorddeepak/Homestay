@@ -4,6 +4,10 @@ This report supersedes section 3 of
 `docs/PHASE_7_EAZYINVITES_REBRAND_REPORT.md`, which described the temporary text
 wordmark and neutral favicon placeholders.
 
+> **Historical note:** the Express/EJS application and its templates described
+> in section 4 have been removed. The React app and FastAPI backend are now the
+> only active stack; the brand assets and visual decisions below still apply.
+
 ## 1. Source bundle
 
 The approved bundle lives at `eazyinvite_brand_assets/` and contains:
@@ -25,14 +29,12 @@ changes were needed.
 | Destination | Files |
 | --- | --- |
 | `frontend/public/brand/` | All five SVG lockups |
-| `public/brand/` | All five SVG lockups (legacy Express app) |
 | `frontend/public/` | `favicon.svg`, `favicon.ico`, 16/32/48/64/180/192/512 PNGs, `apple-touch-icon.png` |
-| `public/` | The same favicon set for the legacy app |
 
 The old `favicon-96x96.png`, `web-app-manifest-192x192.png`, and
-`web-app-manifest-512x512.png` files were removed. Both `site.webmanifest` files
-now point at `favicon-192x192.png` and `favicon-512x512.png`, use the
-`#faf8f5` theme/background colour, and start at `/`.
+`web-app-manifest-512x512.png` files were removed. `frontend/public/site.webmanifest`
+now points at `favicon-192x192.png` and `favicon-512x512.png`, uses the
+`#faf8f5` theme/background colour, and starts at `/`.
 
 ## 3. React application
 
@@ -105,6 +107,8 @@ Footer category links use `/?category=<name>#all-stays`. `BrowsePage` now:
   shift.
 
 ## 4. Legacy Express/EJS application
+
+> Removed during the legacy cleanup; kept here as a record of the earlier UI.
 
 - `views/includes/navbar.ejs` uses `/brand/eazyinvite-logo.svg` in its original
   colours; the transparent navbar keeps the same `earth` text and controls as

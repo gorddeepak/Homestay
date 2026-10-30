@@ -13,8 +13,7 @@ from pydantic import (
     model_validator,
 )
 
-# Mirrors the CATEGORIES list in the Express schema.js, which is the original
-# source of truth for listing categories.
+# The category list used by existing listing data.
 CATEGORIES = (
     "Mountain Escape",
     "Lakefront Retreat",
@@ -126,7 +125,7 @@ def _reject_bool(value):
     return value
 
 
-# Mirrors ReviewSchema in the Express schema.js: an integer rating and a
+# The review contract used by existing listing data: an integer rating and a
 # non-empty comment. 2000 characters is a new API safety limit.
 Rating = Annotated[int, BeforeValidator(_reject_bool), Field(ge=1, le=5)]
 
@@ -203,7 +202,7 @@ class SignupRequest(BaseModel):
 
 
 class LoginRequest(BaseModel):
-    # No upper bounds here: existing Express users may have longer values.
+    # No upper bounds here: existing users may have longer values.
     username: str = Field(min_length=1)
     password: str = Field(min_length=1)
 

@@ -25,7 +25,7 @@ limiter = Limiter(key_func=get_remote_address)
 AUTH_COOKIE_NAME = "homestay_auth"
 AUTH_COOKIE_MAX_AGE = 7 * 24 * 60 * 60
 
-# These are the defaults of the installed passport-local-mongoose 9.1.0 plugin.
+# These are the defaults of the legacy passport-local-mongoose 9.1.0 plugin.
 PASSWORD_ITERATIONS = 25_000
 PASSWORD_KEY_LENGTH = 512
 PASSWORD_DIGEST = "sha256"

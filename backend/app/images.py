@@ -1,8 +1,8 @@
 """Cloudinary image storage for listing photos.
 
-The Express application uses multer-storage-cloudinary in the ``airbnb_DEV``
-folder and stores the upload result as ``{url, filename}`` on the listing,
-where ``filename`` is the Cloudinary public id. This module keeps that format.
+Existing listings store an upload as ``{url, filename}`` on the listing, where
+``filename`` is the Cloudinary public id. This module keeps that format so the
+React app and the seeded data share one schema.
 """
 
 import logging
@@ -16,7 +16,7 @@ from .config import cloudinary_config
 logger = logging.getLogger(__name__)
 
 CLOUDINARY_FOLDER = "airbnb_DEV"
-# The formats the existing Express upload accepts.
+# The formats accepted for listing image uploads.
 ALLOWED_FORMATS = ["png", "jpg", "jpeg"]
 MAX_IMAGE_BYTES = 5 * 1024 * 1024
 

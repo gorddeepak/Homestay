@@ -26,32 +26,18 @@ jobs:
     env:
       # Dummy, test-only configuration. The suites replace provider calls with
       # doubles and refuse outbound network requests.
-      NODE_ENV: test
-      SECRET: ci-test-session-secret-not-for-production
+      ENVIRONMENT: development
+      AUTH_JWT_SECRET: ci-test-jwt-secret-0123456789abcdef0123456789abcdef
+      AUTH_COOKIE_SECURE: "false"
+      AUTH_ALLOWED_ORIGINS: http://localhost:5173
       CLOUD_NAME: ci-test-cloud
       CLOUD_API_KEY: ci-test-key
       CLOUD_API_SECRET: ci-test-secret
       MAPTILER_API_KEY: ci-test-maptiler
       GEMINI_API_KEY: ""
-      GOOGLE_GENERATIVE_AI_API_KEY: ci-test-google
-      AUTH_JWT_SECRET: ci-test-jwt-secret-0123456789abcdef0123456789abcdef
-      ENVIRONMENT: development
-      AUTH_COOKIE_SECURE: "false"
-      AUTH_ALLOWED_ORIGINS: http://localhost:5173
 
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-          cache: npm
-
-      - name: Install root dependencies
-        run: npm ci --legacy-peer-deps
-
-      - name: Node/Express tests
-        run: npm test
 
       - uses: actions/setup-python@v5
         with:
@@ -67,6 +53,16 @@ jobs:
       - name: Backend tests
         working-directory: backend
         run: python -m pytest -q
+
+      - name: Check the seeder compiles
+        working-directory: backend
+        run: python -m py_compile scripts/seed.py
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install frontend dependencies
         working-directory: frontend

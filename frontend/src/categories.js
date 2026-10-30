@@ -1,4 +1,4 @@
-// Mirrors CATEGORIES in the Express schema.js and the FastAPI schemas module.
+// Keep this list in sync with backend/app/schemas.py.
 export const LISTING_CATEGORIES = [
   "Mountain Escape",
   "Lakefront Retreat",

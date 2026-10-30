@@ -1,4 +1,4 @@
-"""MapTiler forward geocoding, matching the existing Express create/update flow.
+"""MapTiler forward geocoding used by listing create/update.
 
 The original application turns a free-text location into a GeoJSON Point on
 create, and again only when the location changes during an edit. The browser

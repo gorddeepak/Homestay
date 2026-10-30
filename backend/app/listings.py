@@ -259,7 +259,7 @@ def delete_listing(
     _: None = Depends(require_trusted_origin),
 ):
     existing = _owned_listing(db, listing_id, user)
-    # Mirror the Mongoose post-delete hook, which removes the listing's reviews.
+    # Deleting a listing also removes the reviews it references.
     review_ids = [
         review_id
         for review_id in existing.get("review") or []

@@ -1,8 +1,5 @@
 import json
-import shutil
-import subprocess
 from datetime import datetime, timedelta, timezone
-from pathlib import Path
 from uuid import uuid4
 
 import jwt
@@ -17,9 +14,30 @@ from app.auth import (
 from app.config import auth_jwt_secret
 
 ALLOWED_ORIGIN = "http://localhost:5173"
-REPO_ROOT = Path(__file__).resolve().parents[2]
-GENERATE_FIXTURE = REPO_ROOT / "test" / "helpers" / "generate-password-fixture.js"
-PASSPORT_LOGIN_CHECK = REPO_ROOT / "test" / "helpers" / "passport-login-check.js"
+
+# Generated once by passport-local-mongoose 9.1.0. Keeping a fixed vector proves
+# the Python implementation still matches the hashes stored by legacy users
+# without requiring Node or the old Mongoose models at test time.
+LEGACY_PASSWORD = "NodeCompatible123!é🔐"
+LEGACY_SALT = "00e9da7c6923f2fd20258387b78138def313051b36d7cc9d0e4608be08f53127"
+LEGACY_HASH = (
+    "7ba6a86106c9f6624005b357040cce87f6a86ff099131326b91fe4020b2b9af3"
+    "2677fb93d973ad909af4447a8ac9ac0358d2c31ad269b451290d6285c5ee53b4"
+    "6a2b5118bedadd031440fcaeaf6aa7e3eea2a07a447f846308e6a244f5bc9e438"
+    "7bac16039cd290b11a806ab93917c33aa8e803ebbbeb683fdb4896b4474ac58e6"
+    "c4ab2d6d41bc65d9cf44089dea6a2fa0de20c8d149e8e87f90ebcbb02efa78af"
+    "004f4eb17c629415dca259074bfd24b0c8bb89e8d2a059cd59eb569da0f62d5d"
+    "825a878706ac3e045e9918dda1f7333e2c8e3875f9d9f9a88ea9fb7f3cee56e2"
+    "b8ba8b9a0b03041d44379ae61d43e5343093b20bc5ea22ca3a15204c31399623"
+    "cb33d8705b14e4b04034b1386eb69fcdbbe0fc58a4a820e759db6b569fcbdcb3"
+    "0b38a33c21e60b23dd1b5fa91cf01b698dba47fa7631b7a494f4581a3bb1fdc"
+    "4c32b5705e561db15ca035b768119be5b61ed495a3e69826157ab04449c58897"
+    "d17f6b5da58b375c6746e89a7f117ff6142ca68318db34d092a13d80e89233cc"
+    "b18209d2680d574608b0ef718317a3e712ccdcc44f6daea7743062ea9c77fc4e"
+    "c0a504fb3b1ff3e6014d125fdac32a05a6991e044d2a3d62694423a3c61eef8"
+    "bb3b3a92b5e9560e047d58b22621f463337604dbff36c4a0d5146efbfa2dc22f"
+    "b9c7e82fb40f86381a7f79712252616140fdea70e32a6d40d914e5f9f10d8c4b"
+)
 
 
 def unique(prefix):
@@ -53,26 +71,6 @@ def login_request(client, username, password, origin=ALLOWED_ORIGIN):
     )
 
 
-def run_node(script, *args):
-    node = shutil.which("node")
-    if node is None:
-        pytest.skip("Node.js is required for the cross-language checks")
-    return subprocess.run(
-        [node, str(script), *args],
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        cwd=REPO_ROOT,
-        timeout=60,
-        check=False,
-    )
-
-
-def database_uri(database):
-    host, port = database.client.address
-    return f"mongodb://{host}:{port}/{database.name}"
-
-
 def decode_token(token):
     return jwt.decode(token, auth_jwt_secret(), algorithms=["HS256"])
 
@@ -82,37 +80,31 @@ def me_with_token(client, token):
     return client.get("/api/auth/me")
 
 
-def test_python_verifies_hash_generated_by_installed_node_plugin():
-    result = run_node(GENERATE_FIXTURE, "NodeCompatible123!é🔐")
+def test_python_verifies_hash_generated_by_passport_local_mongoose():
+    assert len(LEGACY_SALT) == 64
+    assert len(LEGACY_HASH) == 1024
 
-    assert result.returncode == 0, result.stderr
-    fixture = json.loads(result.stdout)
-    assert len(fixture["salt"]) == 64
-    assert len(fixture["hash"]) == 1024
-
-    assert verify_password(fixture["password"], fixture["salt"], fixture["hash"])
-    assert not verify_password("not-the-password", fixture["salt"], fixture["hash"])
+    assert verify_password(LEGACY_PASSWORD, LEGACY_SALT, LEGACY_HASH)
+    assert not verify_password("not-the-password", LEGACY_SALT, LEGACY_HASH)
 
     # Reusing the plugin's salt must produce the exact same hash.
-    salt, password_hash = hash_password(fixture["password"], fixture["salt"])
-    assert salt == fixture["salt"]
-    assert password_hash == fixture["hash"]
+    salt, password_hash = hash_password(LEGACY_PASSWORD, LEGACY_SALT)
+    assert salt == LEGACY_SALT
+    assert password_hash == LEGACY_HASH
 
 
-def test_fastapi_user_authenticates_through_passport_local(client, database):
+def test_signup_stores_passport_local_compatible_hash(client, database):
     username = unique("passport")
     password = "PassportCompatible123!é"
     response = signup_request(client, username=username, password=password)
     assert response.status_code == 201
 
-    uri = database_uri(database)
-    accepted = run_node(PASSPORT_LOGIN_CHECK, uri, username, password)
-    assert accepted.returncode == 0, accepted.stderr
-    assert json.loads(accepted.stdout) == {"ok": True}
-
-    rejected = run_node(PASSPORT_LOGIN_CHECK, uri, username, "wrong-password")
-    assert rejected.returncode == 0, rejected.stderr
-    assert json.loads(rejected.stdout)["ok"] is False
+    user = database.users.find_one({"username": username})
+    assert user is not None
+    assert len(user["salt"]) == 64
+    assert len(user["hash"]) == 1024
+    assert verify_password(password, user["salt"], user["hash"])
+    assert not verify_password("wrong-password", user["salt"], user["hash"])
 
 
 def test_signup_creates_user_and_authenticated_session(client, database):

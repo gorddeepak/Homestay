@@ -542,7 +542,7 @@ def test_delete_own_review_removes_the_document_and_reference(
 def test_cross_listing_review_deletion_is_rejected(
     client, database, make_user, make_listing
 ):
-    """Regression: the Express route deleted any review id from any listing."""
+    """Regression: the legacy route deleted any review id from any listing."""
     user = make_user()
     listing_id = make_listing()
     other_listing_id = make_listing(title="Other stay")

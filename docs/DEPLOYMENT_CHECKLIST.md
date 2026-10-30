@@ -10,7 +10,6 @@ you do.
 ## 1. Before you start
 
 - [ ] Confirm the release branch and record the exact commit being deployed.
-- [ ] Confirm the Express/EJS application is still available as the rollback path.
 - [ ] Have the production MongoDB URI, JWT secret, and provider keys ready in a
       secret manager — never in the repository or a build-time variable.
 - [ ] Decide the public HTTPS origin(s) for the site. The canonical origin is
@@ -19,7 +18,7 @@ you do.
 
 ## 2. Runtime versions
 
-- [ ] Node **22.x** (root `engines` pins `22.22.2`).
+- [ ] Node **22.x** for the frontend build.
 - [ ] Python **3.13**.
 - [ ] MongoDB **7** (Atlas or self-hosted).
 - [ ] Reverse proxy with TLS termination (nginx, Caddy, a load balancer, or a
@@ -39,7 +38,7 @@ Set these in the backend environment:
 | `MAPTILER_API_KEY` | for maps | Public browser key; restrict by origin |
 | `GEMINI_API_KEY` | for AI | Server-side only |
 | `GEMINI_MODEL` | optional | Defaults to the pinned model |
-| `GEMINI_TIMEOUT_SECONDS` | optional | Defaults to 20; keep bounded |
+| `GEMINI_TIMEOUT_SECONDS` | optional | Defaults to 45; keep bounded |
 
 - [ ] `ENVIRONMENT=production` is set. Without it the app starts in development
       mode, which is a **security failure**: localhost origins apply and Secure
@@ -60,9 +59,6 @@ Set these in the backend environment:
 
 - [ ] Backend: `python -m pip install -r backend/requirements.txt` into a clean
       virtualenv.
-- [ ] Root: `npm ci --legacy-peer-deps`
-      (`--legacy-peer-deps` is required by the existing
-      `multer-storage-cloudinary`/`cloudinary` peer range).
 - [ ] Frontend: `npm ci && npm run build` in `frontend/`; deploy
       `frontend/dist/`.
 - [ ] Do **not** run `npm audit fix --force`; it breaks the shadcn CLI.
@@ -74,14 +70,14 @@ One public origin, three routes:
 ```
 /            → static SPA from frontend/dist, fallback to index.html
 /api/*       → FastAPI (uvicorn)
-/images/*    → Express static image host (legacy listing images)
+/images/*    → FastAPI static mount for seeded listing images
 ```
 
 - [ ] SPA fallback is configured for unknown non-`/api` paths.
 - [ ] `/api` is proxied to the FastAPI process with the original `Host` and
       scheme headers preserved.
-- [ ] `/images` is proxied to the Express image host, or images are migrated to
-      Cloudinary URLs.
+- [ ] `/images` is proxied to FastAPI, or the seeded files in
+      `backend/static/images/` are copied to a CDN and the stored URLs updated.
 - [ ] TLS is enforced and HTTP redirects to HTTPS.
 - [ ] Request body limits at the proxy are at least the app limits
       (16 KiB AI, 64 KiB chat, 5 MiB upload) and not larger than necessary.
@@ -149,8 +145,6 @@ Run these against the deployed origin:
 ## 9. Rollback
 
 - [ ] Re-point traffic to the previous backend/frontend release.
-- [ ] If the API must be withdrawn entirely, route `/api` back to the Express
-      application; it remains a working fallback.
 - [ ] Rotate the JWT secret only if you accept invalidating all sessions.
 
 ## 10. Known accepted risks
@@ -158,9 +152,6 @@ Run these against the deployed origin:
 - 3 low **dev-only** frontend advisories (`shadcn` → `@shadcn/registry` →
   `deepmerge`). `npm audit --omit=dev` is clean. The offered fix downgrades the
   CLI and is a breaking change.
-- Root installs require `--legacy-peer-deps` because
-  `multer-storage-cloudinary@4` declares a `cloudinary@^1` peer while the app
-  uses `cloudinary@2`.
 - Rate limiting is in-memory; see §5.
 - Map tiles are verified only against the deployed production key; Phase 6
   verified the unconfigured fallback path.

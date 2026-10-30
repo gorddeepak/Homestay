@@ -1,169 +1,150 @@
 # EazyInvites 🏡
 
-EazyInvites is a full-stack accommodation booking platform inspired by Airbnb. It lets users list, discover and review unique homes to stay in. The project demonstrates auth, CRUD, file uploads, geolocation, and practical AI integrations: an AI listing description generator, a conversational chatbot, and natural-language search (powered by Google Gemini via the Vercel AI SDK).
+EazyInvites is a full-stack accommodation booking platform inspired by Airbnb.
+It lets people list, discover, and review unique stays, with an AI concierge
+named **Mira** who can search listings, compare prices, and summarize reviews.
 
-> **Running the current React + FastAPI stack?** See
-> [docs/RUNNING.md](docs/RUNNING.md). The root Express/EJS app remains available
-> as the legacy UI, and all three apps share the same MongoDB database.
+The current stack is a React single-page app backed by FastAPI. The previous
+Express/EJS application has been removed; all active code lives in `frontend/`
+and `backend/`.
 
 ## ✨ Features
 
-- Listings: create, edit, delete stays with images, price, category and location
-- Image uploads: Cloudinary + Multer
-- Interactive maps: MapLibre GL JS + MapTiler geocoding
-- Authentication: Passport (`passport-local-mongoose`)
-- Reviews & ratings: star ratings and comments per listing
-- Category filtering: quick filters for beach, mountain, city, etc.
-- AI description generator: drafts 2–3 sentence listing copy from title/location/category
-- AI chatbot: floating assistant that can search listings, summarize reviews, and answer questions
-- AI natural-language search: extract structured filters from free-text queries and return matching listings
+- Browse stays by location, country, price, and category
+- Listing detail pages with maps, owner information, and reviews
+- Account signup, login, and logout with signed HTTP-only cookies
+- Create, edit, and delete listings with Cloudinary image uploads
+- Star ratings and review CRUD with author-only editing and deletion
+- Mira concierge: streaming chat grounded in the live listing and review data
+- AI description generator and natural-language listing search
+- Responsive brand UI with a floating Mira button and person-icon account menu
 
 ## 🛠️ Tech Stack
 
-- Backend: Node.js, Express
-- Templating: EJS (`ejs-mate`)
-- Styling: Bootstrap 5 + custom CSS
-- Database: MongoDB, Mongoose
-- Auth: Passport + `passport-local-mongoose`
-- Image storage: Cloudinary (configured in `cloudConfig.js`)
-- Maps & geocoding: MapLibre GL JS + MapTiler
-- AI: Google Gemini via `@google/genai`, `@ai-sdk/google` and the `ai` SDK
-- Validation: Joi / Zod (used in AI tools)
+- Frontend: React 19, Vite, React Router, Tailwind CSS, shadcn/Radix
+- Backend: FastAPI, Pydantic, Pydantic AI, Uvicorn
+- Database: MongoDB via PyMongo
+- Auth: signed JWT cookies, PBKDF2 hashes compatible with existing users
+- Images: Cloudinary uploads; seeded local images served by FastAPI
+- Maps: MapLibre GL JS + MapTiler
+- AI: Google Gemini
+- Tests: pytest for the API, Vite production build for the frontend
 
-## 📚 Table of contents
+## 🚀 Quick Start
 
-- [Getting Started](#getting-started)
-- [Environment Variables](#environment-variables)
-- [Seeding the Database](#seeding-the-database)
-- [Project Structure](#project-structure)
-- [AI Integration Notes](#ai-integration-notes)
-- [Troubleshooting](#troubleshooting)
+Full instructions, including environment variables and troubleshooting, are in
+[docs/RUNNING.md](docs/RUNNING.md).
 
-## Getting Started
-
-### Prerequisites
-
-- Node.js (v16+ recommended)
-- MongoDB running locally or a MongoDB Atlas URI
-- Accounts: Cloudinary, MapTiler, Google AI (Gemini) if you want AI features
-
-### Install
+### 1. Backend
 
 ```bash
-git clone https://github.com/gorddeepak/Homestay.git
-cd Homestay
+cd backend
+python -m venv .venv
+```
+
+Windows:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+macOS/Linux:
+
+```bash
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+Copy `backend/.env.example` to `backend/.env` and fill in `ATLAS_DB_URL`,
+`AUTH_JWT_SECRET`, and any provider keys you want to use.
+
+### 2. Frontend
+
+```bash
+cd frontend
 npm install
 ```
 
-If you encounter peer dependency errors with `multer-storage-cloudinary`, try:
+### 3. Seed sample data (optional, destructive)
 
 ```bash
-npm install --legacy-peer-deps
+cd backend
+python -m scripts.seed
 ```
 
-### Run
+This clears the `reviews`, `listings`, `users`, and stale `sessions`
+collections, then inserts 10 demo users, 49 listings, and their reviews.
 
-Create a `.env` (see next section) then:
+Demo login: `alice_travels` / `Password123`
+
+### 4. Run
+
+**Terminal 1 — API**
+
+```powershell
+cd backend
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+```
+
+**Terminal 2 — React app**
 
 ```bash
-# development with auto-reload
-npx nodemon app.js
-
-# or run once
-node app.js
+cd frontend
+npm run dev
 ```
 
-Visit http://localhost:8080
+Open http://localhost:5173. Vite proxies `/api` and `/images` to the FastAPI
+server on port 8000.
 
-## Environment Variables
+## 📁 Project Structure
 
-Create a `.env` file at the project root and set the following values (example):
-
-```env
-# Local DB (or use an Atlas/hosted URI)
-ATLAS_DB_URL=mongodb://127.0.0.1:27017/homestay
-
-# Session secret
-SECRET=your-session-secret
-
-# Cloudinary
-CLOUD_NAME=your-cloud-name
-CLOUD_API_KEY=your-cloud-api-key
-CLOUD_API_SECRET=your-cloud-api-secret
-
-# MapTiler
-MAPTILER_API_KEY=your-maptile-api-key
-
-# Gemini / Google GenAI
-GEMINI_API_KEY=your-gemini-key
-# (controllers may also read GOOGLE_GENERATIVE_AI_API_KEY)
-
-# Port (optional)
-PORT=8080
+```text
+.
+├── backend/
+│   ├── app/                 # FastAPI routes, auth, AI, listings, reviews
+│   ├── scripts/             # Python database seeder and seed data
+│   ├── static/images/       # Seeded local listing images served at /images
+│   ├── tests/               # pytest suite
+│   └── requirements.txt
+├── frontend/
+│   ├── public/              # Brand assets, favicons, hero image
+│   └── src/                 # React app, components, pages, API client
+├── docs/                    # Run guide and engineering reports
+└── .github/workflows/ci.yml # Backend tests + frontend build
 ```
 
-Make sure `.env` and `node_modules/` are in `.gitignore`.
-
-## Seeding the Database
-
-The project includes a seeder script that populates sample users, listings and reviews.
+## 🧪 Tests
 
 ```bash
-node init/index.js
+cd backend
+.\.venv\Scripts\python.exe -m pytest -q
+
+cd frontend
+npm run build
 ```
 
-The seeder clears Reviews → Listings → Users then inserts sample data.
+The backend suite uses a disposable loopback MongoDB database and blocks
+outbound provider calls. CI runs the same checks on every push and pull request.
 
-## Project Structure
+## 🤖 AI Notes
 
-```
-homestay/
-├── init/              # Database seeding scripts and sample data
-├── models/            # Mongoose schemas (Listing, Review, User)
-├── routes/            # Express route handlers
-├── controllers/       # Route logic, including AI controller
-├── views/             # EJS templates
-├── public/            # CSS, client JS (chat widget, maps)
-├── utils/             # Helpers (wrapAsync, ExpressError, etc.)
-├── cloudConfig.js     # Cloudinary + multer storage config
-├── app.js             # App entry point
-└── .env.example       # Example env variables (not committed)
-```
+- `POST /api/ai/chat` streams Mira's reply as server-sent events.
+- `POST /api/ai/generate-description` drafts listing copy.
+- `POST /api/listings/ai-search` extracts structured filters from free text.
+- Mira's tools read live listings and reviews from MongoDB.
+- Gemini can take 15–25 seconds on a cold request. The UI shows
+  “Mira is thinking…” while it waits.
 
-## AI Integration Notes
+## 🔐 Configuration
 
-AI features are implemented directly with the Gemini API via the Vercel AI SDK and `@google/genai`:
+Only `backend/.env` is used. Copy `backend/.env.example` and set:
 
-- **Description generator** (`POST /listings/ai/generate_description`): prompts Gemini to produce a 2–3 sentence editorial description from title/location/category.
-- **Chatbot** (`POST /listings/ai/chat`): streaming assistant built with `streamText` and `pipeTextStreamToResponse`, uses tool-calling (`tool()` + Zod schemas) for safe DB-backed lookups.
-- **Natural-language search** (`POST /listings/ai/search`): uses `generateObject` to extract structured filters from free text, then queries MongoDB and returns rendered listing partials.
+- `ATLAS_DB_URL` — MongoDB connection string, including the database name
+- `AUTH_JWT_SECRET` — at least 32 characters
+- `AUTH_ALLOWED_ORIGINS` — browser origins allowed to make auth requests
+- `CLOUD_NAME`, `CLOUD_API_KEY`, `CLOUD_API_SECRET` — optional image uploads
+- `MAPTILER_API_KEY` — optional maps and geocoding
+- `GEMINI_API_KEY` — optional Mira and AI features
 
-See `controllers/ai.js` and `routes/ai.js` for implementation details and sample inputs.
-
-## Troubleshooting
-
-- Editor shows red underlines in EJS: VS Code may not understand EJS tags in `<script>` blocks — these are editor diagnostics only.
-- Image upload failures: confirm Cloudinary env vars are set.
-- Map/geocoding failures: verify `MAPTILER_API_KEY`.
-- AI errors: provide valid Gemini API key and confirm environment variables.
-
-## Recommended package.json scripts
-
-Add these for convenience:
-
-```json
-"scripts": {
-  "start": "node app.js",
-  "dev": "nodemon app.js"
-}
-```
-
-## Next steps I can do for you
-
-- Add the `start`/`dev` scripts to `package.json` (I will do this now if you want).
-- Create a `.env.example` file (I will add it now).
-- Remove hardcoded DB strings in `app.js`/`init/index.js` and read from `process.env.MONGO_URL` (optional).
-
----
-
-If you'd like, I will now add the `start`/`dev` scripts and create `.env.example`. 
+Never commit `backend/.env` or provider secrets.

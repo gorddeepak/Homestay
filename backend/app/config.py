@@ -3,7 +3,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-# Keep the backend's configuration separate from the Express app's root .env.
+# The backend owns its configuration; load backend/.env for local development.
 load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
 
