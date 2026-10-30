@@ -1,29 +1,59 @@
-<nav class="navbar navbar-expand-md fixed-top site-nav <%= (currentPath === '/' || currentPath === '/listings') ? 'navbar-transparent' : '' %>">
-  <div class="container-fluid d-flex align-items-center justify-content-between">
+<nav class="navbar navbar-expand-md fixed-top homestay-nav <%= (currentPath === '/' || currentPath === '/listings') ? 'navbar-transparent' : '' %>">
+  <div class="container-fluid d-flex flex-wrap align-items-center justify-content-between">
 
-    <a class="navbar-brand d-flex align-items-center" href="/">
-      <%- include("logo.ejs", { logoVariant: "nav" }) %>
+    <a class="navbar-brand d-flex align-items-center" href="/" aria-label="EazyInvites home">
+      <img src="/brand/eazyinvite-logo.svg" alt="EazyInvites" class="brand-logo" width="1070" height="273">
     </a>
 
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+    <div class="d-flex align-items-center gap-2 order-md-last">
+      <div class="dropdown">
+        <button
+          class="account-toggle"
+          type="button"
+          data-bs-toggle="dropdown"
+          data-bs-auto-close="true"
+          aria-expanded="false"
+          aria-label="<%= currUser ? `Account menu for ${currUser.username}` : 'Account menu' %>"
+        >
+          <i class="bi bi-person"></i>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end account-menu">
+          <% if (!currUser) { %>
+          <li>
+            <span class="account-menu-eyebrow">Welcome</span>
+            <span class="account-menu-name">Find your next stay</span>
+          </li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="/login"><i class="bi bi-box-arrow-in-right"></i> Log in</a></li>
+          <li><a class="dropdown-item" href="/signup"><i class="bi bi-person-plus"></i> Sign up</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="/listings/new"><i class="bi bi-house-add"></i> List your home</a></li>
+          <% } else { %>
+          <li>
+            <span class="account-menu-eyebrow">Signed in as</span>
+            <span class="account-menu-name">@<%= currUser.username %></span>
+          </li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="/listings/new"><i class="bi bi-house-add"></i> Add listing</a></li>
+          <li><a class="dropdown-item account-menu-danger" href="/logout"><i class="bi bi-box-arrow-right"></i> Log out</a></li>
+          <% } %>
+        </ul>
+      </div>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
 
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <div class="d-flex flex-column flex-md-row  align-items-md-center w-100">
+      <div class="d-flex flex-column flex-md-row align-items-md-center w-100">
 
-        <div class="navbar-nav flex-md-row mx-auto ">
-          <a class="nav-link " aria-current="page" href="/listings">Explore</a>
+        <div class="navbar-nav flex-md-row mx-auto">
+          <a class="nav-link" aria-current="page" href="/listings">Explore</a>
         </div>
 
         <div class="navbar-nav flex-md-row align-items-md-center ms-md-auto">
           <a class="nav-link host-link mx-auto" href="/listings/new">Become a Host</a>
-          <% if (!currUser){ %>
-          <a class="nav-link mx-auto" href="/signup"><b>Signup</b></a>
-          <a class="nav-link mx-auto" href="/login"><b>Login</b></a>
-          <% } else { %>
-          <a class="nav-link mx-auto" href="/logout"><b>Logout</b></a>
-          <% } %>
         </div>
 
       </div>

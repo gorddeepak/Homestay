@@ -1,10 +1,10 @@
 # Homestay Migration Audit
 
-**Status:** Audit complete; Phase 0 baseline implemented (uncommitted)
+**Status:** Audit complete; Phase 0 baseline implemented and verified (commit `99b67a0`; 2026-10-27 re-verification notes uncommitted)
 **Repository:** `D:\deepak\coding\Full Stack Dev\Airbnb`
-**Branch / commit:** audit on `main` / `0629cb0`; Phase 0 on `migration/phase-0-baseline` (uncommitted)
+**Branch / commit:** audit on `main` / `0629cb0`; Phase 0 on `migration/phase-0-baseline` / `99b67a0`
 **Audit date:** 2026-10-25
-**Phase 0 date:** 2026-10-26
+**Phase 0 date:** 2026-10-26 (re-verified 2026-10-27)
 **Companion catalog:** `docs/HOMESTAY_SCHEMA_CATALOG.json`
 **Phase 0 report:** `docs/PHASE_0_BASELINE_REPORT.md`
 
@@ -529,7 +529,7 @@ Severity reflects migration impact, not necessarily current production severity.
 | 13 | Markdown/XSS in new chat UI | **High** if unsanitized | Current `textContent`; target Streamdown | Rendering model output as Markdown/HTML can introduce script URLs, raw HTML, or malicious images. | Sanitize links/HTML, disable raw HTML, test XSS payloads, restrict image domains, CSP. |
 | 14 | Cloudinary dependency/version mismatch | **Medium** | `package.json`; lock peer metadata | `multer-storage-cloudinary@4.0.0` declares peer `cloudinary@^1.21.0` but installed Cloudinary is 2.10.0. Current install likely required legacy peer handling. Upload behavior may change in Python. | Keep Cloudinary account; use a supported Python SDK or signed direct upload; test MIME/size/format; add asset cleanup policy. |
 | 15 | MapTiler key exposure and geocode failures | **Medium** | `views/listings/show.ejs:4`; `controllers/listing.js:34,67` | Browser-visible key can be abused; geocoding can return no feature, causing save failure after upload. | Restricted public key + separate server key if supported; validate geocode result; handle no-result and timeout; don't block listing save unnecessarily. |
-| 16 | No parity tests / no CI | **High** | `package.json:12`; `test/`; no CI config | A Phase 0 baseline suite now covers public, auth, ownership, review, AI, category, and health contracts (44 passing, 10 deferred). Refactoring still cannot prove full parity, and nothing runs the suite automatically. | Extend the baseline before each porting phase; add CI that runs `npm test` against a disposable Mongo service; replace characterization assertions as defects are fixed. |
+| 16 | No parity tests / no CI | **High** | `package.json:12`; `test/`; no CI config | A Phase 0 baseline suite now covers public, auth, ownership, review, AI, category, and health contracts (45 passing, 10 deferred). Refactoring still cannot prove full parity, and nothing runs the suite automatically. | Extend the baseline before each porting phase; add CI that runs `npm test` against a disposable Mongo service; replace characterization assertions as defects are fixed. |
 | 17 | Deployment/env inconsistencies | **Medium** | `ATLAS_DB` vs `ATLAS_DB_URL`; ignored `PORT`; no manifest | New deployment can connect to the wrong DB, fail to seed, or bind the wrong port. | Single settings module, startup validation, documented env matrix, container/CI config, health/readiness split. |
 | 18 | SEO/SPA regression | **Medium** | Current server-rendered pages; target Vite SPA | Listing pages may lose crawlable HTML, social previews, and fast first paint. | Decide SEO requirement early; if critical, use SSR/prerender or a meta-tag strategy; otherwise accept and document. |
 | 19 | Duplicate AI invocations in React | **Medium** | Target `useChat`/effects; current vanilla sends on click only | StrictMode, re-renders, or effects can double-send, doubling cost and producing duplicate messages. | Send only from explicit submit; no send in `useEffect`; guard with refs/AbortController; test StrictMode and remounts. |
@@ -567,7 +567,7 @@ Migration consequences:
 
 - A baseline suite exists at `test/phase0-baseline.test.js`, run by `npm test` with Node's built-in test runner and `supertest`. **Verified** — `package.json`, `test/`.
 - The suite uses a unique disposable local MongoDB database (`homestay_phase0_test_<pid>_<timestamp>`), dummy provider credentials, and doubles for Gemini, MapTiler, and Cloudinary. Outbound `fetch`/HTTPS is disabled. **Verified** — `test/helpers/`.
-- Latest result: **54 tests, 44 pass, 10 todo, 0 fail, 12 suites** (approximately 10 seconds). **Verified** — `npm test`.
+- Latest result (re-verified 2026-10-27): **55 tests, 45 pass, 10 todo, 0 fail, 12 suites** (approximately 10–14 seconds). **Verified** — `npm test` on `migration/phase-0-baseline` at `99b67a0`.
 - The 10 `it.todo` cases record deferred secure/future contracts: POST-only logout, CSRF on mutations, cross-listing review deletion, AI auth/rate limits, regex escaping, no-rating semantics, all 11 categories, controlled missing-data errors, `/ready`, and versioned UI message streaming. **Verified** — `test/phase0-baseline.test.js`.
 - Characterization tests deliberately assert current defects: raw provider error leakage, unescaped regex, empty image `src`, 500s on missing price/owner, default map coordinates, 8-of-11 categories, `/health` ignoring MongoDB, and GET logout. These must be replaced, not preserved, in the relevant phases. **Verified** — `docs/PHASE_0_BASELINE_REPORT.md`.
 - No linting/formatting/type checking. **Verified.**
@@ -582,13 +582,13 @@ Migration consequences:
 - Two runtimes mean two dependency ecosystems, two lockfiles, two security-update streams, and two deploy pipelines. **Inference.**
 - The current hard-coded port and ignored `PORT` must not be carried forward. **Verified.**
 - The readiness check must distinguish "app process alive" from "Mongo reachable"; the current health route does not, because listen is gated on DB connection. **Verified.**
-- eazyinvites rebranding (name, domain, logo, copy, metadata) should be a separate change set after functional parity, not mixed with migration commits. **Recommendation.**
+- Easy Invites rebranding (name, domain, logo, copy, metadata) should be a separate change set after functional parity, not mixed with migration commits. **Recommendation.**
 
 ---
 
 ## 6. Recommended migration phases
 
-The sequence is a strangler migration with MongoDB retained. Each phase must be independently deployable and reversible. Do not combine the eazyinvites rebrand with functional migration.
+The sequence is a strangler migration with MongoDB retained. Each phase must be independently deployable and reversible. Do not combine the Easy Invites rebrand with functional migration.
 
 | Phase | Scope | Major dependencies | Practical acceptance criterion |
 |---|---|---|---|
@@ -600,9 +600,9 @@ The sequence is a strangler migration with MongoDB retained. Each phase must be 
 | **5a. Non-streaming AI** | Port description generation and NL search to FastAPI/Pydantic AI or direct provider; return JSON for search; centralize model config. | Pydantic AI + Google provider, Gemini key, prompt fixtures, Pydantic response models | Description returns the expected JSON shape and 2–3 sentence style on golden prompts; NL search extracts min/max/category/location/country; metacharacters are escaped; no HTML returned; provider errors are safe and observable. |
 | **5b. Streaming chat** | Implement UI-message-stream chat with Pydantic AI `VercelAIAdapter` or a verified adapter; port both tools; build React chat with AI Elements; keep a legacy text endpoint only if rollback requires it. | `ai` + `@ai-sdk/react` matching majors, AI Elements vendored, Streamdown, adapter version, tool contract tests, AbortController | Chat streams incrementally; tool calls/results appear as structured parts or are deliberately hidden; Markdown renders safely; no duplicate sends under StrictMode; abort/stop works; step limit and error states tested; token/usage logged. |
 | **6. Cutover and hardening** | Move all traffic to React/FastAPI; keep Mongo; add observability, rate limits, CSRF, security headers, backups, runbooks; decommission EJS/Express. | CI/CD, monitoring, secrets management, load test, backup/restore | All routes pass contract/parity tests; auth and AI smoke tests pass in staging; p95 latency and error budget accepted; rollback to Express verified during a defined window; no secrets in client bundle or logs; backups restore tested. |
-| **7. eazyinvites rebrand (separate)** | Name, domain, logo, palette, copy, metadata, email/social handles. | Brand assets, DNS/domain, legal/privacy review | Rebrand is functionally invisible: same routes/data/behavior; SEO/metadata updated deliberately; rollback independent of migration. |
+| **7. Easy Invites rebrand (separate)** | Name, domain, logo, palette, copy, metadata, email/social handles. | Brand assets, DNS/domain, legal/privacy review | Rebrand is functionally invisible: same routes/data/behavior; SEO/metadata updated deliberately; rollback independent of migration. |
 
-**Phase 0 outcome (2026-10-26):** Implemented on `migration/phase-0-baseline` and uncommitted. `npm test` runs 54 tests (44 pass, 10 deferred, 0 fail) against a disposable local database with Gemini, Cloudinary, and MapTiler doubled; the normal app still starts on port 8080. See `docs/PHASE_0_BASELINE_REPORT.md` for coverage, defects, and limitations. Phase 0 is complete for the Express baseline; CI and the deferred secure contracts remain open.
+**Phase 0 outcome (2026-10-26, re-verified 2026-10-27):** Implemented on `migration/phase-0-baseline` and committed as `99b67a0`. `npm test` runs 55 tests (45 pass, 10 deferred, 0 fail) against a disposable local database with Gemini, Cloudinary, and MapTiler doubled; the normal app still starts on port 8080. See `docs/PHASE_0_BASELINE_REPORT.md` for coverage, defects, and limitations. Phase 0 is complete for the Express baseline; CI and the deferred secure contracts remain open.
 
 ### 6.1 Sequencing rationale
 
@@ -1160,7 +1160,7 @@ Versions marked **TBD** must be selected and verified during Phase 0/1; do not c
 6. **Strict data residency/compliance.** If Gemini/Cloudinary/MapTiler cannot be used in the target region, provider choices must change before the AI migration.
 7. **Offline/real-time requirements.** If live availability or messaging is required, add WebSockets/event infrastructure rather than forcing it into REST/chat streams.
 
-### 11.4 eazyinvites rebranding
+### 11.4 Easy Invites rebranding
 
 Keep the rebrand as a separate phase/project:
 
@@ -1246,6 +1246,7 @@ Keep the rebrand as a separate phase/project:
 - No load, penetration, or dependency-vulnerability scan was performed.
 - No deployment configuration exists to review.
 - Phase 0 addresses the earlier automation gap; its own coverage limitations are recorded in `docs/PHASE_0_BASELINE_REPORT.md`.
+- The Phase 0 suite was re-run on 2026-10-27 on `migration/phase-0-baseline` at `99b67a0`; results and the normal-startup check are recorded in the report.
 - The report intentionally does not reproduce secret values, credential hashes, session IDs, or real user records.
 - The target architecture is a reference; exact package versions and AI Elements/adapters must be validated in a dedicated compatibility spike before implementation.
 

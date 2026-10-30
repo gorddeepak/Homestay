@@ -1,8 +1,8 @@
 # Phase 0 Baseline Report
 
-**Status:** Complete for the Express baseline (uncommitted working tree)
-**Branch:** `migration/phase-0-baseline` (created from `main` / `0629cb0`)
-**Date:** 2026-10-26
+**Status:** Complete for the Express baseline (committed at `99b67a0`; this report's 2026-10-27 verification notes are uncommitted)
+**Branch:** `migration/phase-0-baseline` (base `main` / `0629cb0`)
+**Date:** 2026-10-26; re-verified 2026-10-27
 **Scope:** Automated tests and frozen contracts for the current Express/EJS application. No React, Vite, FastAPI, or Pydantic AI work was started.
 **Companion documents:** `docs/HOMESTAY_MIGRATION_AUDIT.md`, `docs/HOMESTAY_SCHEMA_CATALOG.json`
 
@@ -21,16 +21,45 @@ Phase 0 adds an executable baseline for the application that exists today. The s
 Latest result:
 
 ```text
-# tests 54
+# tests 55
 # suites 12
-# pass 44
+# pass 45
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 10
 ```
 
-Duration is approximately 10 seconds on the development machine. The normal application was also started separately against a disposable database; it connected, listened on port 8080, and `/health` returned `{"ok":true}`.
+Duration is approximately 10–14 seconds on the development machine. The normal application was also started separately against a disposable database; it connected, listened on port 8080, and `/health` returned `{"ok":true}`.
+
+### 1.1 2026-10-27 re-verification
+
+Run on `migration/phase-0-baseline` at commit `99b67a0`, with local MongoDB `127.0.0.1:27017`:
+
+```text
+$ npm test
+# tests 55
+# suites 12
+# pass 45
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 10
+# duration_ms 14254.10
+```
+
+The normal start path was also re-checked in the foreground with a disposable database:
+
+```text
+$env:ATLAS_DB_URL = "mongodb://127.0.0.1:27017/homestay_phase0_startup_check"
+$env:SECRET = "<test-only value>"
+node app.js
+# connected to db
+# server is listening on port 8080
+# GET /health -> {"ok":true}
+```
+
+The disposable database was dropped afterwards. This baseline branch hard-codes port `8080`; the later `PORT` fix on `main` is not part of this branch and is not required by Phase 0.
 
 ---
 
@@ -117,7 +146,7 @@ No production database, real credential, or real user record is used. The suite 
 
 ## 5. Mock strategy
 
-Implemented in `test/helpers/providers.js`, required **before** `app.js` so controllers capture the doubles.
+Implemented in `test/helpers/providers.js`, required **before** `app.js` so controllers capture the doubles. The helper is loaded only after the dummy provider environment variables are set, so `cloudConfig.js` cannot capture real Cloudinary credentials from a caller's shell environment.
 
 | Dependency | Double | What is exercised |
 |---|---|---|
@@ -139,12 +168,12 @@ Important implementation detail: the installed `ai` package exports a **non-exte
 
 ## 6. Coverage and results
 
-File: `test/phase0-baseline.test.js` — 12 suites, 54 tests.
+File: `test/phase0-baseline.test.js` — 12 suites, 55 tests.
 
 | Suite | Passing | Covers |
 |---|---:|---|
 | Public pages and listing index | 4 | Home and `/listings` both render the seeded listing cards; detail renders owner and reviews; missing listing redirects to `/listings`; unknown route returns the HTML 404 page. |
-| Authentication | 5 | Signup + auto-login + session; valid login; invalid password; authenticated GET logout; unauthenticated redirect from protected pages. |
+| Authentication | 6 | Signup/login form rendering; signup + auto-login + session; valid login; invalid password; authenticated GET logout; unauthenticated redirect from protected pages. |
 | Listing ownership | 5 | Create with mocked upload and geocoding; owner edit without re-geocoding; re-geocode on location change; non-owner cannot edit/delete; owner delete cascades reviews. |
 | Review contracts | 7 | Authenticated create; unauthenticated rejection; author-only delete and listing-array consistency; three characterization cases (cross-listing deletion, missing rating, no-rating default) and validation-before-auth. |
 | AI description contract | 4 | JSON `{ description }` shape and prompt content; empty body characterization; malformed JSON → 400 JSON; provider error characterization. |
@@ -169,8 +198,8 @@ File: `test/phase0-baseline.test.js` — 12 suites, 54 tests.
 | `/listings/:id` | DELETE (via `_method`) | Owner delete + review cascade; non-owner rejection. |
 | `/listings/:listingId/review` | POST | Create, auth gate, validation order, no-rating behavior. |
 | `/listings/:listingId/review/:reviewId` | DELETE (via `_method`) | Author-only delete; cross-listing characterization. |
-| `/signup` | GET/POST | POST success and session (GET form render not asserted). |
-| `/login` | GET/POST | Valid and invalid POST credentials (GET form render not asserted). |
+| `/signup` | GET/POST | Form render, POST success, and session. |
+| `/login` | GET/POST | Form render, valid and invalid POST credentials. |
 | `/logout` | GET | Current GET contract. |
 | `/health` | GET | Liveness JSON; post-disconnect behavior. |
 | `/listings/ai/generate_description` | POST | JSON contract, validation, provider error. |
@@ -271,8 +300,8 @@ Also deferred beyond Phase 0: React/FastAPI parity tests, Python PBKDF2 compatib
 
 | # | Criterion | Status |
 |---|---|---|
-| 1 | Normal application starts with existing configuration | **Pass** — verified on port 8080 with a disposable local database; `/health` returned `{"ok":true}`. |
-| 2 | Automated test command runs a repeatable suite against isolated data | **Pass** — `npm test` runs 54 tests serially against a unique, name-guarded, disposable database that is dropped at teardown. |
+| 1 | Normal application starts with existing configuration | **Pass** — re-verified on 2026-10-27 on port 8080 with a disposable local database; `/health` returned `{"ok":true}`. |
+| 2 | Automated test command runs a repeatable suite against isolated data | **Pass** — `npm test` runs 55 tests serially against a unique, name-guarded, disposable database that is dropped at teardown. |
 | 3 | Baseline routes and AI contracts have tests or documented limitations | **Pass** — all requested routes and the three AI contracts are covered; uncovered areas are listed in §10. |
 | 4 | No real Gemini, Cloudinary, MapTiler, or production database calls | **Pass** — modules are replaced before load, credentials are dummy values, outbound `fetch`/HTTPS throws, and the database must be loopback with a Phase 0 name. |
 | 5 | Existing functionality is unchanged | **Pass** — only `app.js` startup gating/exports, `package.json` test wiring, and the lockfile changed; tests assert current behavior. No business logic was fixed. |
@@ -289,13 +318,13 @@ Also deferred beyond Phase 0: React/FastAPI parity tests, Python PBKDF2 compatib
 | `package-lock.json` | Lockfile update for `supertest` and its transitive dependencies. |
 | `test/helpers/environment.js` | Test database creation/guards, environment setup, outbound HTTP block, fixtures, teardown. |
 | `test/helpers/providers.js` | `ai`, `@google/genai`, MapTiler, and Cloudinary doubles. |
-| `test/phase0-baseline.test.js` | 54-test baseline suite (44 passing, 10 todo). |
+| `test/phase0-baseline.test.js` | 55-test baseline suite (45 passing, 10 todo). |
 | `docs/PHASE_0_BASELINE_REPORT.md` | This report. |
 | `docs/HOMESTAY_MIGRATION_AUDIT.md` | Phase 0 outcome recorded in the affected sections only (status, tests, risk 16, §5.3, phase table, §10.1, Appendix C). |
 
 Not changed: `controllers/`, `routes/`, `models/`, `views/`, `public/`, `schema.js`, `middleware.js`, `cloudConfig.js`, `init/`, and `docs/HOMESTAY_SCHEMA_CATALOG.json`.
 
-No commit was created.
+The baseline is committed as `99b67a0` (`add phase 0 baseline: tests, audit, schema catalog`). The 2026-10-27 re-verification and documentation corrections in this file are uncommitted. That date added one test for the existing signup/login form pages and hardened the harness by loading provider doubles only after the dummy environment setup and by normalizing IPv6 loopback URLs. No application behavior or existing assertion changed.
 
 ---
 

@@ -1,5 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title">
-<title id="title">eazyinvites app icon light</title>
-<rect width="512" height="512" rx="102" fill="#FAF8F5"/>
-<g transform="translate(132 132) scale(2.0)"><path d="M10 55 52 14 86 48 86 110 10 110Z M47 108V65L64 49L81 65V108Z" fill="#C9B99A" fill-rule="evenodd"/><path d="M53 55 91 17 120 47 120 110 53 110Z M47 108V65L64 49L81 65V108Z" fill="#8B7355" fill-rule="evenodd"/></g>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="120" height="150" viewBox="0 0 120 150" role="img" aria-label="EazyInvite favicon icon">
+
+  <path d="M20 132 V62 a40 40 0 0 1 80 0 V132 Z" fill="none" stroke="#8B7355" stroke-width="6.5" stroke-linejoin="round"/>
+  <path d="M60 22 V132 M20 80 H100" fill="none" stroke="#8B7355" stroke-width="4.2"/>
+  <path d="M64 128 H96 V86 Z" fill="#C9B99A"/>
+
 </svg>

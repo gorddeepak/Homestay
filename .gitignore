@@ -2,3 +2,12 @@ node_modules/
 .env
 # Claude Code local config
 .claude/
+
+# Python
+backend/.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# React/Vite build output
+frontend/dist/

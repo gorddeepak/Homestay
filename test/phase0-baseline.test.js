@@ -166,6 +166,23 @@ describe("Phase 0 baseline", () => {
   });
 
   describe("authentication", () => {
+    it("renders the signup and login forms", async () => {
+      const signup = await request(app).get("/signup");
+      assert.equal(signup.status, 200);
+      assert.match(signup.headers["content-type"], /text\/html/);
+      assert.match(signup.text, /action="\/signup"/);
+      assert.match(signup.text, /name="username"/);
+      assert.match(signup.text, /name="email"/);
+      assert.match(signup.text, /name="password"/);
+
+      const login = await request(app).get("/login");
+      assert.equal(login.status, 200);
+      assert.match(login.headers["content-type"], /text\/html/);
+      assert.match(login.text, /action="\/login"/);
+      assert.match(login.text, /name="username"/);
+      assert.match(login.text, /name="password"/);
+    });
+
     it("signs up a user, auto-logs in, and creates a session", async () => {
       const agent = request.agent(app);
       const response = await agent

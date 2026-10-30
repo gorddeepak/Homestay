@@ -15,7 +15,6 @@ const { CATEGORIES } = require("../../schema");
 const Listing = require("../../models/listing");
 const Review = require("../../models/review");
 const User = require("../../models/user");
-const providers = require("./providers");
 
 function buildTestDatabaseUrl() {
   const base = process.env.TEST_MONGODB_URI || "mongodb://127.0.0.1:27017";
@@ -36,9 +35,13 @@ function buildTestDatabaseUrl() {
 
   const databaseName = `homestay_phase0_test_${process.pid}_${Date.now()}`;
   const port = parsed.port || "27017";
+  // URL#hostname keeps the brackets for a bracketed IPv6 literal but returns
+  // the bare address when the input is unbracketed. MongoDB URIs require the
+  // bracketed form.
+  const host = parsed.hostname === "::1" ? "[::1]" : parsed.hostname;
   return {
     databaseName,
-    url: `mongodb://${parsed.hostname}:${port}/${databaseName}`,
+    url: `mongodb://${host}:${port}/${databaseName}`,
   };
 }
 
@@ -53,6 +56,11 @@ process.env.CLOUD_API_SECRET = "phase0-test-secret";
 process.env.MAPTILER_API_KEY = "phase0-test-maptiler";
 process.env.GEMINI_API_KEY = "phase0-test-gemini";
 process.env.GOOGLE_GENERATIVE_AI_API_KEY = "phase0-test-google";
+
+// Load the provider doubles only after the dummy credentials are in place.
+// providers.js loads cloudConfig.js, which captures the Cloudinary settings at
+// module-load time; loading it earlier could capture real shell credentials.
+const providers = require("./providers");
 
 // Fail loudly if a provider double is bypassed and code attempts an outbound
 // call. MongoDB and local supertest traffic do not use these APIs.

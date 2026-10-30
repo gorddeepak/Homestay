@@ -1,6 +1,6 @@
-# eazyinvites 🏡
+# EazyInvites 🏡
 
-eazyinvites is a full-stack accommodation booking platform inspired by Airbnb. It lets users list, discover and review unique homes to stay in. The project demonstrates auth, CRUD, file uploads, geolocation, and practical AI integrations: an AI listing description generator, a conversational chatbot, and natural-language search (powered by Google Gemini via the Vercel AI SDK).
+EazyInvites is a full-stack accommodation booking platform inspired by Airbnb. It lets users list, discover and review unique homes to stay in. The project demonstrates auth, CRUD, file uploads, geolocation, and practical AI integrations: an AI listing description generator, a conversational chatbot, and natural-language search (powered by Google Gemini via the Vercel AI SDK).
 
 ## ✨ Features
 
@@ -46,8 +46,8 @@ eazyinvites is a full-stack accommodation booking platform inspired by Airbnb. I
 ### Install
 
 ```bash
-git clone https://github.com/<your-username>/eazyinvites.git
-cd eazyinvites
+git clone https://github.com/<your-username>/homestay.git
+cd "Airbnb"
 npm install
 ```
 
@@ -76,7 +76,7 @@ Visit http://localhost:8080
 Create a `.env` file at the project root and set the following values (example):
 
 ```env
-# Local DB (legacy database name; rename only with a data migration)
+# Local DB (or use ATLAS/hosted URI)
 MONGO_URL=mongodb://127.0.0.1:27017/homestay
 # or ATLAS_DB_URL=your-atlas-connection-string
 
@@ -114,14 +114,13 @@ The seeder clears Reviews → Listings → Users then inserts sample data.
 ## Project Structure
 
 ```
-eazyinvites/
+homestay/
 ├── init/              # Database seeding scripts and sample data
 ├── models/            # Mongoose schemas (Listing, Review, User)
 ├── routes/            # Express route handlers
 ├── controllers/       # Route logic, including AI controller
 ├── views/             # EJS templates
-├── public/            # CSS, client JS (chat widget, maps), favicons, PWA icons
-├── eazyinvites-brand-kit/ # Source logo, app icon, and favicon assets
+├── public/            # CSS, client JS (chat widget, maps)
 ├── utils/             # Helpers (wrapAsync, ExpressError, etc.)
 ├── cloudConfig.js     # Cloudinary + multer storage config
 ├── app.js             # App entry point

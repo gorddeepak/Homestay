@@ -2,7 +2,7 @@
   "engines": {
     "node": "22.22.2"
   },
-  "name": "eazyinvites",
+  "name": "homestay",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -25,18 +25,18 @@
     "dotenv": "^17.4.2",
     "ejs": "^6.0.1",
     "ejs-mate": "^4.0.0",
-    "express": "^5.2.1",
+    "express": "^5.3.0",
     "express-session": "^1.19.0",
-    "joi": "^18.2.1",
+    "joi": "^18.3.0",
     "method-override": "^3.0.0",
-    "mongoose": "^9.6.2",
-    "multer": "^2.2.0",
+    "mongoose": "^9.11.4",
+    "multer": "^2.5.0",
     "multer-storage-cloudinary": "^4.0.0",
     "nodemon": "^3.1.14",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^9.1.0",
-    "zod": "^4.4.3"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "supertest": "^7.3.1"

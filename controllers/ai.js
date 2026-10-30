@@ -45,7 +45,7 @@ Description:`;
 
 
 const searchListingsTool = tool({
-  description: "Search eazyinvites listings by location, country, price range, or category",
+  description: "Search homestay listings by location, country, price range, or category",
   inputSchema: z.object({
     location: z.string().optional().describe("City or region to search in"),
     country: z.string().optional().describe("Country to search in"),
@@ -89,7 +89,7 @@ module.exports.chat = async (req, res) => {
 
     const result = streamText({
       model: google("gemini-3.1-flash-lite"),
-      system: `You are a helpful, warm assistant for eazyinvites, an accommodation booking platform.
+      system: `You are Mira, the helpful and warm stay concierge for EazyInvites, an accommodation booking platform.
 Guidelines:
 - Keep responses concise — 2-4 sentences unless listing multiple results.
 - When showing search results, list title, location, and price clearly.

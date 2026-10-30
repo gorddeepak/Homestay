@@ -15,20 +15,24 @@
 })();
 
 
-// ── 2. NAVBAR TRANSPARENCY ──
-// The navbar starts transparent over the hero on the home/listing index.
-// After 50px of scrolling it switches to the solid linen glass bar.
-const navbar = document.querySelector('.site-nav');
+// ── 2. NAVBAR TRANSPARENCY + SCROLL ──
+// On the homepage the navbar starts transparent (over the hero).
+// Once the user scrolls past 50px, add .scrolled to switch to solid.
+const navbar = document.querySelector('.homestay-nav');
 
 if (navbar && navbar.classList.contains('navbar-transparent')) {
-  const updateNavbar = () => {
-    navbar.classList.toggle('scrolled', window.scrollY > 50);
-  };
+  // Run once on load in case page is already scrolled (e.g. after redirect)
+  if (window.scrollY > 50) {
+    navbar.classList.add('scrolled');
+  }
 
-  // Run once in case the page loads already scrolled (e.g. after a redirect)
-  updateNavbar();
-
-  window.addEventListener('scroll', updateNavbar, { passive: true });
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
+  });
 }
 
 
@@ -117,7 +121,7 @@ document.getElementById("chatToggleBtn").addEventListener("click", () => {
   document.getElementById("chatToggleBtn").style.display = "none";
   sessionStorage.setItem("chatOpen", "true");
   if (!welcomeShown) {
-    const intro_msg = "Hi! I can help you find listings, check prices, or summarize reviews. What are you looking for?"
+    const intro_msg = "Hi, I’m Mira — your EazyInvites concierge. I can help you find stays, compare prices, or summarize guest reviews. What are you looking for?"
     appendMessage("assistant", intro_msg);
     conversation.push({ role: "assistant", content: intro_msg });
     saveConversation();
@@ -125,6 +129,13 @@ document.getElementById("chatToggleBtn").addEventListener("click", () => {
     sessionStorage.setItem("chatWelcomeShown", "true")
   }
 });
+
+const footerChatBtn = document.getElementById("footerChatBtn");
+if (footerChatBtn) {
+  footerChatBtn.addEventListener("click", () => {
+    document.getElementById("chatToggleBtn").click();
+  });
+}
 
 document.getElementById("chatCloseBtn").addEventListener("click", () => {
   document.getElementById("chatBox").style.display = "none";
