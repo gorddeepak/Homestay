@@ -98,6 +98,8 @@ def test_chat_streams_text_chunks(client, monkeypatch):
     assert response.status_code == 200, response.text
     assert response.headers["content-type"].startswith("text/event-stream")
     assert response.headers["x-vercel-ai-ui-message-stream"] == "v1"
+    assert response.headers["access-control-allow-origin"] == ORIGIN
+    assert response.headers["access-control-allow-credentials"] == "true"
 
     chunks = sse_chunks(response)
     types = [chunk["type"] for chunk in chunks]

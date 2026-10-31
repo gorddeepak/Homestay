@@ -1,3 +1,5 @@
+import { apiUrl } from "./apiUrl";
+
 function fieldLabel(location) {
   if (!Array.isArray(location)) {
     return "This field";
@@ -47,8 +49,8 @@ function errorMessage(body, status) {
 async function request(path, options = {}) {
   let response;
   try {
-    response = await fetch(`/api${path}`, {
-      credentials: "same-origin",
+    response = await fetch(apiUrl(`/api${path}`), {
+      credentials: "include",
       ...options,
     });
   } catch {

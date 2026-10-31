@@ -12,9 +12,11 @@ you do.
 - [ ] Confirm the release branch and record the exact commit being deployed.
 - [ ] Have the production MongoDB URI, JWT secret, and provider keys ready in a
       secret manager — never in the repository or a build-time variable.
-- [ ] Decide the public HTTPS origin(s) for the site. The canonical origin is
-      `https://eazyinvites.in`; `https://www.eazyinvites.in` is already expected
-      to redirect to the apex domain.
+- [ ] Decide the public HTTPS origin(s) for the site. The canonical origins are
+      `https://eazyinvites.in` for the React Static Site and
+      `https://api.eazyinvites.in` for the FastAPI service;
+      `https://www.eazyinvites.in` is already expected to redirect to the apex
+      domain.
 
 ## 2. Runtime versions
 
@@ -33,7 +35,7 @@ Set these in the backend environment:
 | `ENVIRONMENT` | yes | Must be exactly `production` |
 | `ATLAS_DB_URL` | yes | Must include the database name |
 | `AUTH_JWT_SECRET` | yes | ≥ 32 chars, generated per environment |
-| `AUTH_ALLOWED_ORIGINS` | yes | Comma-separated, every entry `https://…`, no localhost |
+| `AUTH_ALLOWED_ORIGINS` | yes | Comma-separated, every entry `https://…`, no localhost; also drives CORS |
 | `CLOUD_NAME`, `CLOUD_API_KEY`, `CLOUD_API_SECRET` | for uploads | Server-side only |
 | `MAPTILER_API_KEY` | for maps | Public browser key; restrict by origin |
 | `GEMINI_API_KEY` | for AI | Server-side only |
@@ -48,6 +50,17 @@ Set these in the backend environment:
       For the canonical deployment: `AUTH_ALLOWED_ORIGINS=https://eazyinvites.in`.
       The `www` hostname redirects to the apex at the edge, so it does not need
       to be listed.
+- [ ] The same `AUTH_ALLOWED_ORIGINS` list drives CORS and the
+      `require_trusted_origin` check. A frontend origin missing from this list
+      fails both preflight and state-changing requests.
+- [ ] During temporary Render testing, add the Static Site hostname as well:
+      `AUTH_ALLOWED_ORIGINS=https://eazyinvites.in,https://eazyinvites-web.onrender.com`.
+      Remove the `onrender.com` entry once the custom domain is live.
+- [ ] The frontend and API use their custom domains
+      (`https://eazyinvites.in` and `https://api.eazyinvites.in`) for full auth
+      testing. Two separate `*.onrender.com` hostnames are cross-site because
+      `onrender.com` is on the Public Suffix List, so the `SameSite=Lax` auth
+      cookie will not persist between them.
 - [ ] `AUTH_COOKIE_SECURE` may be left unset; production ignores it and always
       sets `Secure`.
 - [ ] The JWT secret is unique to production and is not the development value.
@@ -59,24 +72,29 @@ Set these in the backend environment:
 
 - [ ] Backend: `python -m pip install -r backend/requirements.txt` into a clean
       virtualenv.
-- [ ] Frontend: `npm ci && npm run build` in `frontend/`; deploy
-      `frontend/dist/`.
+- [ ] Frontend: set `VITE_API_URL=https://api.eazyinvites.in` in the Render
+      Static Site build environment (no trailing slash, no `/api`), then
+      `npm ci && npm run build`; deploy `frontend/dist/`. Changing this value
+      requires a new frontend build.
 - [ ] Do **not** run `npm audit fix --force`; it breaks the shadcn CLI.
 
-## 5. Serve the app
+## 5. Serve the two services
 
-One public origin, three routes:
+Render runs the frontend and API on different origins:
 
-```
-/            → static SPA from frontend/dist, fallback to index.html
-/api/*       → FastAPI (uvicorn)
-/images/*    → FastAPI static mount for seeded listing images
-```
+| Service | Public origin | Serves |
+| --- | --- | --- |
+| Static Site | `https://eazyinvites.in` | React build from `frontend/dist/` |
+| Web Service | `https://api.eazyinvites.in` | FastAPI at `/api/*` and `/images/*` |
 
-- [ ] SPA fallback is configured for unknown non-`/api` paths.
-- [ ] `/api` is proxied to the FastAPI process with the original `Host` and
-      scheme headers preserved.
-- [ ] `/images` is proxied to FastAPI, or the seeded files in
+- [ ] SPA fallback is configured for unknown non-asset paths on the Static Site.
+- [ ] FastAPI serves `/api/*` and `/images/*` on the API origin.
+- [ ] `VITE_API_URL=https://api.eazyinvites.in` is set for the Static Site
+      build. The app then calls `https://api.eazyinvites.in/api/*` and resolves
+      `/images/*` to the same API origin.
+- [ ] CORS and `require_trusted_origin` both allow exactly the origins in
+      `AUTH_ALLOWED_ORIGINS`. There is no wildcard origin.
+- [ ] `/images` is served by FastAPI, or the seeded files in
       `backend/static/images/` are copied to a CDN and the stored URLs updated.
 - [ ] TLS is enforced and HTTP redirects to HTTPS.
 - [ ] Request body limits at the proxy are at least the app limits
@@ -111,16 +129,25 @@ uvicorn app.main:app --proxy-headers --forwarded-allow-ips=<proxy-ip>
 
 ## 7. Verify the deployment
 
-Run these against the deployed origin:
+Run these against the deployed origins:
 
-- [ ] `GET /api/health/ready` → `200`.
+- [ ] `GET https://api.eazyinvites.in/api/health/ready` → `200`.
+- [ ] An API request with `Origin: https://eazyinvites.in` returns
+      `Access-Control-Allow-Origin: https://eazyinvites.in` and
+      `Access-Control-Allow-Credentials: true`.
+- [ ] An `OPTIONS` preflight from `https://eazyinvites.in` succeeds; the same
+      preflight from an unlisted origin is rejected.
 - [ ] Load `/` and a listing detail page; no console errors from application
       code.
+- [ ] Seeded images load from `https://api.eazyinvites.in/images/...`, not from
+      the frontend origin.
 - [ ] The browser tab title reads `EazyInvites`, and the favicon loads without a
       `404`.
-- [ ] Sign up, log out, log in, and confirm the session survives a reload.
-- [ ] Confirm the auth cookie is `HttpOnly`, `Secure`, `SameSite=lax` in the
-      browser devtools, and that `document.cookie` is empty.
+- [ ] Sign up, log out, log in, and confirm the session survives a reload using
+      the custom domains.
+- [ ] Confirm the auth cookie is `HttpOnly`, `Secure`, `SameSite=lax`, host-only
+      on `api.eazyinvites.in` (no `Domain` attribute), and that
+      `document.cookie` is empty.
 - [ ] Confirm no credentials appear in `localStorage`/`sessionStorage`.
 - [ ] Create, edit, and delete a listing as its owner; confirm another account
       cannot.
@@ -153,6 +180,9 @@ Run these against the deployed origin:
   `deepmerge`). `npm audit --omit=dev` is clean. The offered fix downgrades the
   CLI and is a breaking change.
 - Rate limiting is in-memory; see §5.
+- `onrender.com` is on the Public Suffix List, so two `*.onrender.com` service
+  hostnames are cross-site. The `SameSite=Lax` auth cookie is reliable only on
+  the intended custom domains (`eazyinvites.in` and `api.eazyinvites.in`).
 - Map tiles are verified only against the deployed production key; Phase 6
   verified the unconfigured fallback path.
 

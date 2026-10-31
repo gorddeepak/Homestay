@@ -3,6 +3,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pymongo.errors import PyMongoError
@@ -11,7 +12,7 @@ from slowapi.errors import RateLimitExceeded
 from . import database
 from .ai import router as ai_router
 from .auth import limiter, router as auth_router
-from .config import maptiler_api_key, validate_config
+from .config import auth_allowed_origins, maptiler_api_key, validate_config
 from .listings import router as listings_router
 from .reviews import router as reviews_router
 from .uploads import router as uploads_router
@@ -25,6 +26,11 @@ AI_BODY_LIMITS = {
     "/api/listings/ai-search": AI_MAX_REQUEST_BYTES,
     "/api/ai/chat": CHAT_MAX_REQUEST_BYTES,
 }
+
+# The frontend is a separate origin in production. Reuse AUTH_ALLOWED_ORIGINS so
+# CORS and the trusted-origin auth check cannot drift apart.
+CORS_ALLOWED_METHODS = ["GET", "POST", "PATCH", "DELETE", "OPTIONS"]
+CORS_ALLOWED_HEADERS = ["Content-Type"]
 
 
 async def _reject(scope, receive, send, status_code: int, detail: str) -> None:
@@ -114,6 +120,16 @@ app = FastAPI(title="EazyInvites API", version="0.6.0", lifespan=lifespan)
 app.mount("/images", StaticFiles(directory=STATIC_IMAGES_DIR), name="images")
 app.state.limiter = limiter
 app.add_middleware(RequestBodyLimitMiddleware, limits=AI_BODY_LIMITS)
+# Add CORS last so it wraps body-limit and error responses too. It also answers
+# preflight OPTIONS requests before they reach the routes.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=sorted(auth_allowed_origins()),
+    allow_credentials=True,
+    allow_methods=CORS_ALLOWED_METHODS,
+    allow_headers=CORS_ALLOWED_HEADERS,
+    max_age=600,
+)
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded)
 app.add_exception_handler(RequestValidationError, _validation_failed)
 app.include_router(listings_router, prefix="/api")

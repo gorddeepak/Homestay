@@ -21,6 +21,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
+import { apiUrl } from "../apiUrl";
 
 // Markdown rendering is only needed once a reply arrives, so keep its parser
 // out of the initial bundle.
@@ -28,7 +29,7 @@ const Streamdown = lazy(() =>
   import("streamdown").then((module) => ({ default: module.Streamdown }))
 );
 
-const CHAT_ENDPOINT = "/api/ai/chat";
+const CHAT_ENDPOINT = apiUrl("/api/ai/chat");
 const MAX_MESSAGE_CHARS = 2000;
 const MAX_HISTORY_MESSAGES = 10;
 const MAX_HISTORY_CHARS = 12_000;
@@ -238,7 +239,7 @@ export default function ChatAssistant({ open, onOpenChange }) {
   const transport = useRef(
     new DefaultChatTransport({
       api: CHAT_ENDPOINT,
-      credentials: "same-origin",
+      credentials: "include",
       prepareSendMessagesRequest: ({ id, messages, trigger, messageId }) => ({
         body: {
           id,
